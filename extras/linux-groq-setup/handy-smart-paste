@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+text=${1-}
+window_id=$(timeout 1 xdotool getactivewindow)
+window_class=$(timeout 1 xprop -id "$window_id" WM_CLASS 2>/dev/null)
+window_class=${window_class,,}
+
+printf '%s' "$text" | timeout 1 xsel --clipboard --input
+
+case "$window_class" in
+  *gnome-terminal*|*kgx*|*konsole*|*tilix*|*terminator*|*xfce4-terminal*|*alacritty*|*kitty*|*wezterm*|*xterm*|*urxvt*|*foot*)
+    timeout 1 xdotool key --clearmodifiers ctrl+shift+v
+    ;;
+  *)
+    timeout 1 xdotool key --clearmodifiers ctrl+v
+    ;;
+esac
