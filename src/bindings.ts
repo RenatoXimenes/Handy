@@ -880,11 +880,81 @@ async updateRecordingRetentionPeriod(period: string) : Promise<Result<null, stri
     else return { status: "error", error: e  as any };
 }
 },
+async listTranscriptionEndpoints() : Promise<Result<TranscriptionEndpointView[], string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("list_transcription_endpoints") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async saveTranscriptionEndpoint(input: TranscriptionEndpointInput) : Promise<Result<TranscriptionEndpointView, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("save_transcription_endpoint", { input }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async deleteTranscriptionEndpoint(id: string) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("delete_transcription_endpoint", { id }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async duplicateTranscriptionEndpoint(id: string) : Promise<Result<TranscriptionEndpointView, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("duplicate_transcription_endpoint", { id }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async setActiveTranscriptionEndpoint(id: string) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("set_active_transcription_endpoint", { id }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async setTranscriptionEndpointSecret(id: string, secret: string) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("set_transcription_endpoint_secret", { id, secret }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async clearTranscriptionEndpointSecret(id: string) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("clear_transcription_endpoint_secret", { id }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async hasTranscriptionEndpointSecret(id: string) : Promise<Result<boolean, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("has_transcription_endpoint_secret", { id }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async testTranscriptionEndpoint(id: string) : Promise<Result<TranscriptionEndpointTestResult, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("test_transcription_endpoint", { id }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
 /**
- * Checks if the Mac is a laptop by detecting battery presence
- * 
- * This uses pmset to check for battery information.
- * Returns true if a battery is detected (laptop), false otherwise (desktop)
+ * Stub implementation for non-macOS platforms
+ * Always returns false since laptop detection is macOS-specific
  */
 async isLaptop() : Promise<Result<boolean, string>> {
     try {
@@ -957,7 +1027,7 @@ reliable_paste?: boolean; typing_tool?: TypingTool; external_script_path?: strin
  * not gated on this — that follows model capability. Migrated from the old
  * `overlay_position` (position `none` → style `None`).
  */
-overlay_style?: OverlayStyle }
+overlay_style?: OverlayStyle; transcription_endpoints?: TranscriptionEndpointProfile[]; active_transcription_endpoint_id?: string }
 export type AudioDevice = { index: string; name: string; is_default: boolean }
 export type AutoSubmitKey = "enter" | "ctrl_enter" | "cmd_enter"
 export type AvailableAccelerators = { transcribe: string[]; ort: string[]; gpu_devices: GpuDeviceOption[] }
@@ -970,7 +1040,7 @@ export type EngineType =
  * Voxtral, Qwen3-ASR, Nemotron, …). The architecture is auto-detected from
  * the file, so this one variant covers the whole transcribe-cpp family.
  */
-"TranscribeCpp" | "Parakeet" | "Moonshine" | "MoonshineStreaming" | "SenseVoice" | "GigaAM" | "Canary" | "Cohere"
+"TranscribeCpp" | "Parakeet" | "Moonshine" | "MoonshineStreaming" | "SenseVoice" | "GigaAM" | "Canary" | "Cohere" | "CloudApi"
 export type GpuDeviceOption = { id: number; name: string; total_vram_mb: number }
 export type HistoryEntry = { id: number; file_name: string; timestamp: number; saved: boolean; title: string; transcription_text: string; post_processed_text: string | null; post_process_prompt: string | null; post_process_requested: boolean }
 export type HistoryUpdatePayload = { action: "added"; entry: HistoryEntry } | { action: "updated"; entry: HistoryEntry } | { action: "deleted"; id: number } | { action: "toggled"; id: number }
@@ -1010,12 +1080,16 @@ sha256: string | null } } |
  * HF cache (so other tools reuse it). The file within the repo is
  * [`ModelInfo::filename`].
  */
-{ HuggingFace: { repo_id: string; revision: string } } | 
+{ HuggingFace: { repo_id: string; revision: string } } |
 /**
  * Already present on disk — a user-provided custom model, or one discovered
  * in a shared cache. Nothing to download.
  */
-"Local"
+"Local" |
+/**
+ * OpenAI-compatible remote transcription. No local file is loaded.
+ */
+"Api"
 export type ModelUnloadTimeout = "never" | "immediately" | "min_2" | "min_5" | "min_10" | "min_15" | "hour_1" | "sec_15"
 export type OrtAcceleratorSetting = "auto" | "cpu" | "cuda" | "directml" | "rocm"
 export type OverlayPosition = "top" | "bottom"
@@ -1104,6 +1178,11 @@ export type StreamWorkKind = "transcribing" | "polishing"
  */
 export type Theme = "system" | "light" | "dark"
 export type TranscribeAcceleratorSetting = "auto" | "cpu" | "gpu"
+export type TranscriptionAuthType = "none" | "bearer" | "custom_header"
+export type TranscriptionEndpointInput = { id: string | null; name: string; base_url: string; transcription_path: string; model: string; auth_type: TranscriptionAuthType; auth_header_name: string | null; send_language: boolean; extra_params_json: string; timeout_secs: number }
+export type TranscriptionEndpointProfile = { id: string; name: string; base_url: string; transcription_path?: string; model: string; auth_type?: TranscriptionAuthType; auth_header_name?: string | null; send_language?: boolean; extra_params_json?: string; timeout_secs?: number; is_preset?: boolean }
+export type TranscriptionEndpointTestResult = { ok: boolean; message: string }
+export type TranscriptionEndpointView = { id: string; name: string; base_url: string; transcription_path: string; model: string; auth_type: TranscriptionAuthType; auth_header_name: string | null; send_language: boolean; extra_params_json: string; timeout_secs: number; is_preset: boolean; is_active: boolean; has_secret: boolean }
 export type TypingTool = "auto" | "wtype" | "kwtype" | "dotool" | "ydotool" | "xdotool"
 export type WindowsMicrophonePermissionStatus = { supported: boolean; overall_access: PermissionAccess; device_access: PermissionAccess; app_access: PermissionAccess; desktop_app_access: PermissionAccess }
 

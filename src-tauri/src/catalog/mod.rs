@@ -208,6 +208,9 @@ static RANK_BY_ID: Lazy<HashMap<String, u32>> = Lazy::new(|| {
 /// Recommended rank for a model id (lower = higher priority). Returns
 /// `u32::MAX` for unranked/unknown ids so they sort last in an ascending sort.
 pub fn rank_of(model_id: &str) -> u32 {
+    if model_id == crate::asr_client::API_TRANSCRIPTION_MODEL_ID {
+        return 0;
+    }
     RANK_BY_ID.get(model_id).copied().unwrap_or(u32::MAX)
 }
 

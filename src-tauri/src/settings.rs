@@ -106,6 +106,92 @@ pub struct PostProcessProvider {
     pub supports_structured_output: bool,
 }
 
+#[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Eq, Type, Default)]
+#[serde(rename_all = "snake_case")]
+pub enum TranscriptionAuthType {
+    None,
+    #[default]
+    Bearer,
+    CustomHeader,
+}
+
+#[derive(Serialize, Deserialize, Debug, Clone, Type)]
+pub struct TranscriptionEndpointProfile {
+    pub id: String,
+    pub name: String,
+    pub base_url: String,
+    #[serde(default = "default_transcription_path")]
+    pub transcription_path: String,
+    pub model: String,
+    #[serde(default)]
+    pub auth_type: TranscriptionAuthType,
+    #[serde(default)]
+    pub auth_header_name: Option<String>,
+    #[serde(default = "default_true")]
+    pub send_language: bool,
+    #[serde(default)]
+    pub extra_params_json: String,
+    #[serde(default = "default_transcription_timeout_secs")]
+    pub timeout_secs: u64,
+    #[serde(default)]
+    pub is_preset: bool,
+}
+
+fn default_true() -> bool {
+    true
+}
+
+fn default_transcription_path() -> String {
+    "/audio/transcriptions".to_string()
+}
+
+fn default_transcription_timeout_secs() -> u64 {
+    60
+}
+
+pub fn default_groq_transcription_endpoint() -> TranscriptionEndpointProfile {
+    TranscriptionEndpointProfile {
+        id: "groq".to_string(),
+        name: "Groq".to_string(),
+        base_url: "https://api.groq.com/openai/v1".to_string(),
+        transcription_path: default_transcription_path(),
+        model: "whisper-large-v3-turbo".to_string(),
+        auth_type: TranscriptionAuthType::Bearer,
+        auth_header_name: None,
+        send_language: true,
+        extra_params_json: String::new(),
+        timeout_secs: default_transcription_timeout_secs(),
+        is_preset: true,
+    }
+}
+
+pub fn default_openai_transcription_endpoint() -> TranscriptionEndpointProfile {
+    TranscriptionEndpointProfile {
+        id: "openai".to_string(),
+        name: "OpenAI".to_string(),
+        base_url: "https://api.openai.com/v1".to_string(),
+        transcription_path: default_transcription_path(),
+        model: "whisper-1".to_string(),
+        auth_type: TranscriptionAuthType::Bearer,
+        auth_header_name: None,
+        send_language: true,
+        extra_params_json: String::new(),
+        timeout_secs: default_transcription_timeout_secs(),
+        is_preset: true,
+    }
+}
+
+pub fn default_transcription_endpoints() -> Vec<TranscriptionEndpointProfile> {
+    vec![
+        default_groq_transcription_endpoint(),
+        default_openai_transcription_endpoint(),
+    ]
+}
+
+fn default_active_transcription_endpoint_id() -> String {
+    "groq".to_string()
+}
+
 #[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Eq, Type)]
 #[serde(rename_all = "lowercase")]
 pub enum OverlayPosition {
@@ -473,6 +559,10 @@ pub struct AppSettings {
     /// `overlay_position` (position `none` → style `None`).
     #[serde(default = "default_overlay_style")]
     pub overlay_style: OverlayStyle,
+    #[serde(default = "default_transcription_endpoints")]
+    pub transcription_endpoints: Vec<TranscriptionEndpointProfile>,
+    #[serde(default = "default_active_transcription_endpoint_id")]
+    pub active_transcription_endpoint_id: String,
 }
 
 fn default_model() -> String {
@@ -791,6 +881,25 @@ fn ensure_post_process_defaults(settings: &mut AppSettings) -> bool {
     changed
 }
 
+fn ensure_transcription_endpoint_defaults(settings: &mut AppSettings) -> bool {
+    let mut changed = false;
+    for preset in default_transcription_endpoints() {
+        if settings.transcription_endpoint(&preset.id).is_none() {
+            settings.transcription_endpoints.push(preset);
+            changed = true;
+        }
+    }
+    if settings.active_transcription_endpoint_id.is_empty()
+        || settings
+            .transcription_endpoint(&settings.active_transcription_endpoint_id)
+            .is_none()
+    {
+        settings.active_transcription_endpoint_id = default_active_transcription_endpoint_id();
+        changed = true;
+    }
+    changed
+}
+
 pub const SETTINGS_STORE_PATH: &str = "settings_store.json";
 
 pub fn get_default_settings() -> AppSettings {
@@ -905,6 +1014,8 @@ pub fn get_default_settings() -> AppSettings {
         extra_recording_buffer_ms: 0,
         vad_enabled: default_vad_enabled(),
         overlay_style: default_overlay_style(),
+        transcription_endpoints: default_transcription_endpoints(),
+        active_transcription_endpoint_id: default_active_transcription_endpoint_id(),
     }
 }
 
@@ -934,6 +1045,29 @@ impl AppSettings {
         self.post_process_providers
             .iter_mut()
             .find(|provider| provider.id == provider_id)
+    }
+
+    pub fn transcription_endpoint(
+        &self,
+        endpoint_id: &str,
+    ) -> Option<&TranscriptionEndpointProfile> {
+        self.transcription_endpoints
+            .iter()
+            .find(|endpoint| endpoint.id == endpoint_id)
+    }
+
+    pub fn transcription_endpoint_mut(
+        &mut self,
+        endpoint_id: &str,
+    ) -> Option<&mut TranscriptionEndpointProfile> {
+        self.transcription_endpoints
+            .iter_mut()
+            .find(|endpoint| endpoint.id == endpoint_id)
+    }
+
+    pub fn active_transcription_endpoint(&self) -> Option<&TranscriptionEndpointProfile> {
+        self.transcription_endpoint(&self.active_transcription_endpoint_id)
+            .or_else(|| self.transcription_endpoints.first())
     }
 }
 
@@ -987,7 +1121,9 @@ pub fn get_settings(app: &AppHandle) -> AppSettings {
         default_settings
     };
 
-    if ensure_post_process_defaults(&mut settings) {
+    if ensure_post_process_defaults(&mut settings)
+        | ensure_transcription_endpoint_defaults(&mut settings)
+    {
         store.set("settings", serde_json::to_value(&settings).unwrap());
     }
 
@@ -1494,5 +1630,28 @@ mod tests {
         let out = format!("{:?}", map);
         assert!(!out.contains("secret"));
         assert!(out.contains("[REDACTED]"));
+    }
+
+    #[test]
+    fn default_transcription_endpoints_include_groq() {
+        let settings = get_default_settings();
+        assert_eq!(settings.active_transcription_endpoint_id, "groq");
+        let groq = settings
+            .transcription_endpoint("groq")
+            .expect("groq preset");
+        assert_eq!(groq.model, "whisper-large-v3-turbo");
+        assert_eq!(groq.base_url, "https://api.groq.com/openai/v1");
+        assert_eq!(groq.transcription_path, "/audio/transcriptions");
+        assert!(settings.transcription_endpoint("openai").is_some());
+    }
+
+    #[test]
+    fn ensure_transcription_presets_are_added() {
+        let mut settings = get_default_settings();
+        settings.transcription_endpoints.clear();
+        settings.active_transcription_endpoint_id.clear();
+        assert!(ensure_transcription_endpoint_defaults(&mut settings));
+        assert!(settings.transcription_endpoint("groq").is_some());
+        assert_eq!(settings.active_transcription_endpoint_id, "groq");
     }
 }

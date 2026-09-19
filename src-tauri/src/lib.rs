@@ -1,6 +1,7 @@
 mod actions;
 #[cfg(all(target_os = "macos", target_arch = "aarch64"))]
 mod apple_intelligence;
+mod asr_client;
 mod audio_feedback;
 pub mod audio_toolkit;
 mod autostart;
@@ -16,6 +17,7 @@ mod memory;
 mod overlay;
 mod paste_tx;
 pub mod portable;
+mod secret_store;
 mod secure_input;
 mod settings;
 mod shortcut;
@@ -713,6 +715,15 @@ pub fn run(cli_args: CliArgs) {
             commands::history::retry_history_entry_transcription,
             commands::history::update_history_limit,
             commands::history::update_recording_retention_period,
+            commands::transcription_api::list_transcription_endpoints,
+            commands::transcription_api::save_transcription_endpoint,
+            commands::transcription_api::delete_transcription_endpoint,
+            commands::transcription_api::duplicate_transcription_endpoint,
+            commands::transcription_api::set_active_transcription_endpoint,
+            commands::transcription_api::set_transcription_endpoint_secret,
+            commands::transcription_api::clear_transcription_endpoint_secret,
+            commands::transcription_api::has_transcription_endpoint_secret,
+            commands::transcription_api::test_transcription_endpoint,
             helpers::clamshell::is_laptop,
         ])
         .events(collect_events![

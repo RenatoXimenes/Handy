@@ -36,6 +36,7 @@ pub enum EngineType {
     GigaAM,
     Canary,
     Cohere,
+    CloudApi,
 }
 
 /// Where a model comes from and how Handy obtains it — the routing discriminant
@@ -55,6 +56,8 @@ pub enum ModelSource {
     /// Already present on disk — a user-provided custom model, or one discovered
     /// in a shared cache. Nothing to download.
     Local,
+    /// OpenAI-compatible remote transcription. No local file is loaded.
+    Api,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Type)]
@@ -540,6 +543,32 @@ impl ModelManager {
         .into_iter()
         .map(String::from)
         .collect();
+
+        available_models.insert(
+            crate::asr_client::API_TRANSCRIPTION_MODEL_ID.to_string(),
+            ModelInfo {
+                id: crate::asr_client::API_TRANSCRIPTION_MODEL_ID.to_string(),
+                name: "API Transcription".to_string(),
+                description: "Cloud or self-hosted OpenAI-compatible transcription.".to_string(),
+                filename: String::new(),
+                source: ModelSource::Api,
+                size_mb: 0,
+                is_downloaded: true,
+                is_downloading: false,
+                partial_size: 0,
+                is_directory: false,
+                engine_type: EngineType::CloudApi,
+                accuracy_score: 0.92,
+                speed_score: 0.95,
+                supports_translation: false,
+                is_recommended: true,
+                supported_languages: whisper_languages.clone(),
+                supports_language_selection: true,
+                is_custom: false,
+                supports_streaming: false,
+                supports_language_detection: true,
+            },
+        );
 
         available_models.insert(
             "small".to_string(),
@@ -1370,6 +1399,12 @@ impl ModelManager {
         let mut vanished_alternates: Vec<String> = Vec::new();
 
         for model in models.values_mut() {
+            if matches!(model.source, ModelSource::Api) {
+                model.is_downloaded = true;
+                model.is_downloading = false;
+                model.partial_size = 0;
+                continue;
+            }
             if let ModelSource::HuggingFace { repo_id, revision } = &model.source {
                 // A models-dir copy counts too: mirror-fallback downloads land
                 // there, and it makes manual drop-ins of catalog files work.
@@ -1507,11 +1542,9 @@ impl ModelManager {
         // If no model is selected, pick the first downloaded one using the same
         // ranked order the UI receives.
         if settings.selected_model.is_empty() {
-            if let Some(available_model) = self
-                .get_available_models()
-                .into_iter()
-                .find(|model| model.is_downloaded)
-            {
+            if let Some(available_model) = self.get_available_models().into_iter().find(|model| {
+                model.is_downloaded && !matches!(model.engine_type, EngineType::CloudApi)
+            }) {
                 info!(
                     "Auto-selecting model: {} ({})",
                     available_model.id, available_model.name
@@ -2166,7 +2199,7 @@ impl ModelManager {
                     .download_hf_model(&model_info, repo_id.clone(), revision.clone())
                     .await;
             }
-            ModelSource::Local => {
+            ModelSource::Local | ModelSource::Api => {
                 return Err(anyhow::anyhow!("No download source for model"));
             }
         };
@@ -2359,6 +2392,12 @@ impl ModelManager {
         let model_info =
             model_info.ok_or_else(|| anyhow::anyhow!("Model not found: {}", model_id))?;
 
+        if matches!(model_info.source, ModelSource::Api) {
+            return Err(anyhow::anyhow!(
+                "API transcription profiles are managed in settings, not deleted as models"
+            ));
+        }
+
         debug!("ModelManager: Found model info: {:?}", model_info);
 
         if let ModelSource::HuggingFace { repo_id, revision } = &model_info.source {
@@ -2474,6 +2513,12 @@ impl ModelManager {
         let model_info = self
             .get_model_info(model_id)
             .ok_or_else(|| anyhow::anyhow!("Model not found: {}", model_id))?;
+
+        if matches!(model_info.source, ModelSource::Api) {
+            return Err(anyhow::anyhow!(
+                "API transcription models do not have a local path"
+            ));
+        }
 
         if !model_info.is_downloaded {
             return Err(anyhow::anyhow!("Model not available: {}", model_id));
