@@ -17,6 +17,7 @@ import {
   type TranscriptionEndpointInput,
   type TranscriptionEndpointView,
 } from "@/lib/transcriptionApi";
+import { isEndpointEffectivelyActive } from "./transcriptionApiState";
 
 const authOptions: TranscriptionAuthType[] = [
   "none",
@@ -24,7 +25,14 @@ const authOptions: TranscriptionAuthType[] = [
   "custom_header",
 ];
 
-export const TranscriptionApiSettings: React.FC = () => {
+interface TranscriptionApiSettingsProps {
+  apiModelActive: boolean;
+  activateApiModel: () => Promise<boolean>;
+}
+
+export const TranscriptionApiSettings: React.FC<
+  TranscriptionApiSettingsProps
+> = ({ apiModelActive, activateApiModel }) => {
   const { t } = useTranslation();
   const [endpoints, setEndpoints] = useState<TranscriptionEndpointView[]>([]);
   const [loading, setLoading] = useState(true);
@@ -146,120 +154,136 @@ export const TranscriptionApiSettings: React.FC = () => {
       {error && <p className="text-sm text-red-500">{error}</p>}
 
       <div className="space-y-2">
-        {endpoints.map((endpoint) => (
-          <div
-            key={endpoint.id}
-            className="flex flex-col gap-2 rounded-lg border border-mid-gray/20 px-3 py-2"
-          >
-            <div className="flex items-center justify-between gap-2">
-              <div className="min-w-0">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <p className="text-sm font-semibold truncate">
-                    {endpoint.name}
-                  </p>
-                  {endpoint.is_active && (
-                    <span className="text-xs text-logo-primary">
-                      {t("settings.api.active")}
+        {endpoints.map((endpoint) => {
+          const isActive = isEndpointEffectivelyActive(
+            endpoint.is_active,
+            apiModelActive,
+          );
+
+          return (
+            <div
+              key={endpoint.id}
+              className="flex flex-col gap-2 rounded-lg border border-mid-gray/20 px-3 py-2"
+            >
+              <div className="flex items-center justify-between gap-2">
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <p className="text-sm font-semibold truncate">
+                      {endpoint.name}
+                    </p>
+                    {isActive && (
+                      <span className="text-xs text-logo-primary">
+                        {t("settings.api.active")}
+                      </span>
+                    )}
+                    <span className="text-xs text-text/50">
+                      {endpoint.auth_type === "none"
+                        ? t("settings.api.keyNotRequired")
+                        : endpoint.has_secret
+                          ? t("settings.api.keyConfigured")
+                          : t("settings.api.keyMissing")}
                     </span>
-                  )}
-                  <span className="text-xs text-text/50">
-                    {endpoint.auth_type === "none"
-                      ? t("settings.api.keyNotRequired")
-                      : endpoint.has_secret
-                        ? t("settings.api.keyConfigured")
-                        : t("settings.api.keyMissing")}
-                  </span>
+                  </div>
+                  <p className="text-xs text-text/50 truncate">
+                    {endpoint.model || t("settings.api.noModel")} ·{" "}
+                    {endpoint.base_url}
+                  </p>
                 </div>
-                <p className="text-xs text-text/50 truncate">
-                  {endpoint.model || t("settings.api.noModel")} ·{" "}
-                  {endpoint.base_url}
+                <div className="flex items-center gap-1 shrink-0">
+                  {!isActive && (
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      disabled={busyId === endpoint.id}
+                      onClick={() =>
+                        runAction(endpoint.id, async () => {
+                          if (!endpoint.is_active) {
+                            await setActiveTranscriptionEndpoint(endpoint.id);
+                          }
+                          if (!(await activateApiModel())) {
+                            throw new Error(
+                              "Failed to activate API transcription",
+                            );
+                          }
+                        })
+                      }
+                    >
+                      <Check className="w-3.5 h-3.5" />
+                      {t("settings.api.activate")}
+                    </Button>
+                  )}
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    disabled={busyId === endpoint.id}
+                    onClick={async () => {
+                      setBusyId(endpoint.id);
+                      try {
+                        const result = await testTranscriptionEndpoint(
+                          endpoint.id,
+                        );
+                        setTestMessage((current) => ({
+                          ...current,
+                          [endpoint.id]: result.message,
+                        }));
+                      } catch (err) {
+                        setError(String(err));
+                      } finally {
+                        setBusyId(null);
+                      }
+                    }}
+                  >
+                    {t("settings.api.test")}
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    aria-label={t("settings.api.edit")}
+                    title={t("settings.api.edit")}
+                    onClick={() => openEdit(endpoint)}
+                  >
+                    <Pencil className="w-3.5 h-3.5" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    aria-label={t("settings.api.duplicate")}
+                    title={t("settings.api.duplicate")}
+                    disabled={busyId === endpoint.id}
+                    onClick={() =>
+                      runAction(endpoint.id, async () => {
+                        await duplicateTranscriptionEndpoint(endpoint.id);
+                      })
+                    }
+                  >
+                    <Copy className="w-3.5 h-3.5" />
+                  </Button>
+                  {!endpoint.is_preset && (
+                    <Button
+                      variant="danger-ghost"
+                      size="sm"
+                      aria-label={t("common.delete")}
+                      title={t("common.delete")}
+                      disabled={busyId === endpoint.id}
+                      onClick={() =>
+                        runAction(endpoint.id, () =>
+                          deleteTranscriptionEndpoint(endpoint.id),
+                        )
+                      }
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </Button>
+                  )}
+                </div>
+              </div>
+              {testMessage[endpoint.id] && (
+                <p className="text-xs text-text/60">
+                  {testMessage[endpoint.id]}
                 </p>
-              </div>
-              <div className="flex items-center gap-1 shrink-0">
-                {!endpoint.is_active && (
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    disabled={busyId === endpoint.id}
-                    onClick={() =>
-                      runAction(endpoint.id, () =>
-                        setActiveTranscriptionEndpoint(endpoint.id),
-                      )
-                    }
-                  >
-                    <Check className="w-3.5 h-3.5" />
-                    {t("settings.api.activate")}
-                  </Button>
-                )}
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  disabled={busyId === endpoint.id}
-                  onClick={async () => {
-                    setBusyId(endpoint.id);
-                    try {
-                      const result = await testTranscriptionEndpoint(
-                        endpoint.id,
-                      );
-                      setTestMessage((current) => ({
-                        ...current,
-                        [endpoint.id]: result.message,
-                      }));
-                    } catch (err) {
-                      setError(String(err));
-                    } finally {
-                      setBusyId(null);
-                    }
-                  }}
-                >
-                  {t("settings.api.test")}
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  aria-label={t("settings.api.edit")}
-                  title={t("settings.api.edit")}
-                  onClick={() => openEdit(endpoint)}
-                >
-                  <Pencil className="w-3.5 h-3.5" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  aria-label={t("settings.api.duplicate")}
-                  title={t("settings.api.duplicate")}
-                  disabled={busyId === endpoint.id}
-                  onClick={() =>
-                    runAction(endpoint.id, async () => {
-                      await duplicateTranscriptionEndpoint(endpoint.id);
-                    })
-                  }
-                >
-                  <Copy className="w-3.5 h-3.5" />
-                </Button>
-                {!endpoint.is_preset && (
-                  <Button
-                    variant="danger-ghost"
-                    size="sm"
-                    aria-label={t("common.delete")}
-                    title={t("common.delete")}
-                    disabled={busyId === endpoint.id}
-                    onClick={() =>
-                      runAction(endpoint.id, () =>
-                        deleteTranscriptionEndpoint(endpoint.id),
-                      )
-                    }
-                  >
-                    <Trash2 className="w-3.5 h-3.5" />
-                  </Button>
-                )}
-              </div>
+              )}
             </div>
-            {testMessage[endpoint.id] && (
-              <p className="text-xs text-text/60">{testMessage[endpoint.id]}</p>
-            )}
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       <Dialog
