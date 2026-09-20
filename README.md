@@ -1,10 +1,49 @@
-# Handy
+# Handy — API Transcription Edition
 
 [![Discord](https://img.shields.io/badge/Discord-%235865F2.svg?style=for-the-badge&logo=discord&logoColor=white)](https://discord.com/invite/WVBeWsNXK4)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Upstream](https://img.shields.io/badge/upstream-cjpais%2FHandy-blue)](https://github.com/cjpais/Handy)
 
-**A free, open source, and extensible speech-to-text application that works completely offline.**
+> This is a community-maintained fork of
+> [cjpais/Handy](https://github.com/cjpais/Handy). It preserves Handy's local,
+> offline transcription and adds an optional low-latency API mode.
 
-Handy is a cross-platform desktop application that provides simple, privacy-focused speech transcription. Press a shortcut, speak, and have your words appear in any text field. This happens on your own computer without sending any information to the cloud.
+Handy is a cross-platform speech-to-text application. Press a shortcut, speak,
+and have the transcription pasted into the application you are using. Choose
+between local models for maximum privacy or a compatible remote API when fast
+turnaround and low local resource usage are the priority.
+
+## What This Fork Adds
+
+| Improvement               | What it provides                                                                                                                       |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| Remote transcription      | Groq and OpenAI presets, plus custom OpenAI-compatible `/audio/transcriptions` endpoints                                               |
+| Fast Groq workflow        | `whisper-large-v3-turbo`, explicit language selection and a persistent microphone mode for low startup latency                         |
+| Secure credentials        | API keys remain in the operating system credential store: Secret Service on Linux, Keychain on macOS and Credential Manager on Windows |
+| Safer networking          | HTTPS for remote hosts, no redirects with credentials, bounded responses and strict JSON validation                                    |
+| Endpoint management       | Add, duplicate, test and select endpoints; configure model, language forwarding, timeout and extra form fields                         |
+| Linux shortcut resilience | Falls back to non-blocking hotkey capture when exclusive blocking is unavailable                                                       |
+| Faster X11 typing         | Reduces the per-character `xdotool` delay                                                                                              |
+| Smart paste helper        | Optional X11 helper that uses `Ctrl+Shift+V` in terminals and `Ctrl+V` in browsers, chats and ordinary text fields                     |
+
+Groq is particularly useful for interactive dictation because its hosted
+inference is designed for fast responses. End-to-end latency still depends on
+recording length, network distance, provider load and the destination
+application; this project does not claim a universal benchmark.
+
+See [API transcription and security](docs/API_TRANSCRIPTION.md) for the complete
+setup, privacy model and endpoint contract. Linux users can also install the
+[smart paste helper](extras/smart-paste-x11/README.md). A concise maintenance
+record is available in [fork changes](docs/FORK_CHANGES.md).
+
+## Privacy Modes
+
+- **Local models:** audio stays on the computer, matching upstream Handy's
+  privacy-first behavior.
+- **Remote API:** the recorded audio is sent to the endpoint you select. Its
+  privacy policy, retention rules and usage costs apply.
+- API keys are never written to Handy's settings JSON or committed to this
+  repository. They are stored by the operating system credential service.
 
 ## Why Handy?
 
@@ -12,27 +51,38 @@ Handy was created to fill the gap for a truly open source, extensible speech-to-
 
 - **Free**: Accessibility tooling belongs in everyone's hands, not behind a paywall
 - **Open Source**: Together we can build further. Extend Handy for yourself and contribute to something bigger
-- **Private**: Your voice stays on your computer. Get transcriptions without sending audio to the cloud
+- **Private by choice**: local models keep audio on your computer; remote APIs are explicit and optional in this fork
 - **Simple**: One tool, one job. Transcribe what you say and put it into a text box
 
 ## How It Works
 
 1. **Press** a configurable keyboard shortcut: hold it to record and release to stop, or tap it to toggle recording on and off (Hold-only and Toggle-only modes are also available)
 2. **Speak** your words while the shortcut is active
-3. **Release** and Handy processes your speech using Whisper
+3. **Release** and Handy processes your speech using a local model or your selected API endpoint
 4. **Get** your transcribed text pasted directly into whatever app you're using
 
-The process is entirely local:
+With a local model, the process is entirely local. With API Transcription,
+Handy encodes the recording as 16 kHz mono WAV and sends it to the configured
+provider:
 
 - Silence is filtered using VAD (Voice Activity Detection) with Silero
 - Transcription uses your choice of models:
   - **Whisper models** (Small/Medium/Turbo/Large) with GPU acceleration when available
   - **Parakeet V3** - CPU-optimized model with excellent performance and automatic language detection
+  - **API Transcription** - Groq, OpenAI or a custom OpenAI-compatible endpoint
 - Works on Windows, macOS, and Linux
 
 ## Quick Start
 
 ### Installation
+
+The releases and package-manager commands below install **upstream Handy** and
+do not yet contain this fork's API additions. To use the additions, clone this
+repository and build the `api-transcription` branch by following
+[BUILD.md](BUILD.md). A fork-specific release will be linked here when a tested
+installer is published. Automatic updates are disabled in fork builds until
+that release channel exists, preventing an upstream update from removing the
+fork-specific features.
 
 1. Download the latest release from the [releases page](https://github.com/cjpais/Handy/releases) or the [website](https://handy.computer)
    - **macOS**: Also available via [Homebrew cask](https://formulae.brew.sh/cask/handy): `brew install --cask handy`
@@ -47,6 +97,22 @@ The process is entirely local:
 3. Launch Handy and grant necessary system permissions (microphone, accessibility)
 4. Configure your preferred keyboard shortcuts in Settings
 5. Start transcribing!
+
+### Groq in Six Steps
+
+1. Create a Groq API key in your Groq account. Do not paste it into a config
+   file, issue or commit.
+2. Open **Settings → Models → API transcription**.
+3. Edit the **Groq** preset, enter the key and keep
+   `whisper-large-v3-turbo` as the model.
+4. Click **Test**, then **Use** to activate the endpoint.
+5. Select **API Transcription** as the transcription model.
+6. Select your spoken language instead of automatic detection when you want the
+   lowest avoidable request overhead.
+
+For a faster start beep, enable the always-on microphone option. This keeps the
+audio stream ready and uses more system resources than opening it for every
+recording.
 
 ### Development Setup
 
