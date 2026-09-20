@@ -2,7 +2,7 @@ name: "code quality"
 on:
   workflow_dispatch:
   push:
-    branches: [main]
+    branches: [main, api-transcription]
     paths:
       - "src/**"
       - "src-tauri/src/catalog/catalog.json"

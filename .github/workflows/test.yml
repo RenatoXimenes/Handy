@@ -2,7 +2,7 @@ name: "test"
 on:
   workflow_dispatch:
   push:
-    branches: [main]
+    branches: [main, api-transcription]
     paths:
       - "src-tauri/**"
   pull_request:
