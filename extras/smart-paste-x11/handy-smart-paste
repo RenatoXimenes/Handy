@@ -1,0 +1,41 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+text=${1-}
+mode=${HANDY_PASTE_MODE:-auto}
+
+for command in xdotool xprop xsel timeout; do
+  if ! command -v "$command" >/dev/null 2>&1; then
+    printf 'handy-smart-paste: missing dependency: %s\n' "$command" >&2
+    exit 1
+  fi
+done
+
+case "$mode" in
+  auto)
+    window_id=$(timeout 1 xdotool getactivewindow)
+    window_class=$(timeout 1 xprop -id "$window_id" WM_CLASS 2>/dev/null)
+    window_class=${window_class,,}
+    case "$window_class" in
+      *gnome-terminal*|*kgx*|*konsole*|*tilix*|*terminator*|*xfce4-terminal*|*alacritty*|*kitty*|*wezterm*|*xterm*|*urxvt*|*foot*)
+        mode=terminal
+        ;;
+      *)
+        mode=standard
+        ;;
+    esac
+    ;;
+  terminal|standard) ;;
+  *)
+    printf 'handy-smart-paste: HANDY_PASTE_MODE must be auto, terminal, or standard\n' >&2
+    exit 2
+    ;;
+esac
+
+printf '%s' "$text" | timeout 2 xsel --clipboard --input
+
+if [[ "$mode" == terminal ]]; then
+  timeout 1 xdotool key --clearmodifiers ctrl+shift+v
+else
+  timeout 1 xdotool key --clearmodifiers ctrl+v
+fi
