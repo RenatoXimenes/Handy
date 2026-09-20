@@ -420,6 +420,8 @@ fn type_text_via_xdotool(text: &str) -> Result<(), String> {
     let output = Command::new("xdotool")
         .arg("type")
         .arg("--clearmodifiers")
+        .arg("--delay")
+        .arg("1")
         .arg("--")
         .arg(text)
         .output()
