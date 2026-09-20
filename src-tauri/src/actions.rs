@@ -725,7 +725,19 @@ impl ShortcutAction for TranscribeAction {
                         // surfaced instead — the worker may still hold the engine,
                         // so a batch fallback would contend with it.
                         Ok(Some(text)) if !text.trim().is_empty() => Ok(text),
-                        Ok(_) => tm.transcribe(samples),
+                        Ok(_) => {
+                            let tm_for_batch = Arc::clone(&tm);
+                            match tauri::async_runtime::spawn_blocking(move || {
+                                tm_for_batch.transcribe(samples)
+                            })
+                            .await
+                            {
+                                Ok(result) => result,
+                                Err(error) => {
+                                    Err(anyhow::anyhow!("Transcription worker failed: {error}"))
+                                }
+                            }
+                        }
                         Err(err) => Err(err),
                     };
 

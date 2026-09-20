@@ -94,6 +94,10 @@
       "cohere-int8": {
         "name": "Cohere",
         "description": "बड़ा और थोड़ा धीमा, लेकिन बहुत सटीक बहुभाषी मॉडल."
+      },
+      "api-transcription": {
+        "name": "API Transcription",
+        "description": "Send audio to Groq, OpenAI, or a custom OpenAI-compatible endpoint. No local model is loaded."
       }
     },
     "errors": {
@@ -152,7 +156,8 @@
       "translation": "अंग्रेज़ी में अनुवाद कर सकता है",
       "translate": "अनुवाद करें",
       "streaming": "बोलते समय लाइव ट्रांसक्रिप्शन दिखाता है"
-    }
+    },
+    "api": "API"
   },
   "settings": {
     "modelSettings": {
@@ -636,6 +641,42 @@
           "details": "Handy का लोकल स्पीच-टू-टेक्स्ट transcribe.cpp और ggml पर आधारित है. Georgi Gerganov और योगदान देने वालों के शानदार काम के लिए धन्यवाद."
         }
       }
+    },
+    "api": {
+      "title": "API transcription",
+      "description": "Use Groq, OpenAI, or your own OpenAI-compatible /audio/transcriptions endpoint. Keys are stored in the system keyring.",
+      "privacyNotice": "Remote mode sends each recording to the selected provider. Local models remain offline.",
+      "add": "Add endpoint",
+      "active": "Active",
+      "activate": "Use",
+      "test": "Test",
+      "keyConfigured": "Key stored",
+      "keyMissing": "No key",
+      "keyNotRequired": "No key required",
+      "edit": "Edit endpoint",
+      "duplicate": "Duplicate endpoint",
+      "noModel": "No model",
+      "createTitle": "New endpoint",
+      "editTitle": "Edit endpoint",
+      "removeKey": "Remove key",
+      "auth": {
+        "none": "No authentication",
+        "bearer": "Bearer token",
+        "custom_header": "Custom header"
+      },
+      "fields": {
+        "name": "Name",
+        "baseUrl": "Base URL",
+        "path": "Transcription path",
+        "model": "Model",
+        "auth": "Authentication",
+        "headerName": "Header name",
+        "apiKey": "API key",
+        "apiKeyPlaceholder": "Leave blank to keep the stored key",
+        "timeout": "Timeout (seconds)",
+        "extraJson": "Extra JSON fields",
+        "sendLanguage": "Send language to the API"
+      }
     }
   },
   "footer": {
@@ -663,7 +704,9 @@
     "open": "खोलें",
     "copy": "कॉपी करें",
     "clear": "मिटाएं",
-    "noOptionsFound": "कोई विकल्प नहीं मिला"
+    "noOptionsFound": "कोई विकल्प नहीं मिला",
+    "save": "Save",
+    "cancel": "Cancel"
   },
   "accessibility": {
     "permissionsDescription": "ट्रांसक्राइब किया गया टेक्स्ट टाइप करने के लिए, Handy को ऐक्सेसिबिलिटी अनुमतियों की ज़रूरत है.",

@@ -18,6 +18,7 @@ import {
   supportsLanguageCode,
 } from "@/lib/constants/languages.ts";
 import type { ModelInfo } from "@/bindings";
+import { TranscriptionApiSettings } from "./TranscriptionApiSettings";
 
 // check if model supports a language based on its supported_languages list
 const modelSupportsLanguage = (model: ModelInfo, langCode: string): boolean => {
@@ -247,6 +248,8 @@ export const ModelsSettings: React.FC = () => {
           {t("settings.models.description")}
         </p>
       </div>
+
+      <TranscriptionApiSettings />
 
       {/* Search bar — filter the catalog by name or description */}
       <div className="relative">

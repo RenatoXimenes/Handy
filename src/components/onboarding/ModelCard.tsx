@@ -45,6 +45,9 @@ const getLanguageDisplayText = (
 export const isLegacySource = (model: ModelInfo): boolean =>
   typeof model.source === "object" && "Url" in model.source;
 
+export const isApiSource = (model: ModelInfo): boolean =>
+  model.source === "Api" || model.engine_type === "CloudApi";
+
 // Extract a GGUF quantization label from a filename, if present (e.g. "Q8_0").
 const getQuantLabel = (filename: string): string | null => {
   const match = filename.match(
@@ -185,6 +188,9 @@ const ModelCard: React.FC<ModelCardProps> = ({
             {isLegacySource(model) && (
               <Badge variant="secondary">{t("modelSelector.legacy")}</Badge>
             )}
+            {isApiSource(model) && (
+              <Badge variant="secondary">{t("modelSelector.api")}</Badge>
+            )}
             {status === "switching" && (
               <Badge variant="secondary">
                 <Loader2 className="w-3 h-3 mr-1 animate-spin" />
@@ -261,7 +267,7 @@ const ModelCard: React.FC<ModelCardProps> = ({
             <span>{t("modelSelector.streaming")}</span>
           </div>
         )}
-        {showModelSize && (
+        {showModelSize && !isApiSource(model) && (
           <span className="flex items-center gap-1.5 ms-auto text-xs text-text/50">
             {status === "downloadable" ? (
               <Download className="w-3.5 h-3.5" />
@@ -274,18 +280,20 @@ const ModelCard: React.FC<ModelCardProps> = ({
             )}
           </span>
         )}
-        {onDelete && (status === "available" || status === "active") && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleDelete}
-            title={t("modelSelector.deleteModel", { modelName: displayName })}
-            className="flex items-center gap-1.5 text-logo-primary/85 hover:text-logo-primary hover:bg-logo-primary/10"
-          >
-            <Trash2 className="w-3.5 h-3.5" />
-            <span>{t("common.delete")}</span>
-          </Button>
-        )}
+        {onDelete &&
+          !isApiSource(model) &&
+          (status === "available" || status === "active") && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleDelete}
+              title={t("modelSelector.deleteModel", { modelName: displayName })}
+              className="flex items-center gap-1.5 text-logo-primary/85 hover:text-logo-primary hover:bg-logo-primary/10"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+              <span>{t("common.delete")}</span>
+            </Button>
+          )}
       </div>
 
       {/* Download/extract progress */}

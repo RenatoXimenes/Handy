@@ -94,6 +94,10 @@
       "cohere-int8": {
         "name": "Cohere",
         "description": "Mô hình lớn, chậm hơn, nhưng rất chính xác và đa ngôn ngữ."
+      },
+      "api-transcription": {
+        "name": "API Transcription",
+        "description": "Send audio to Groq, OpenAI, or a custom OpenAI-compatible endpoint. No local model is loaded."
       }
     },
     "errors": {
@@ -152,7 +156,8 @@
     },
     "cancel": "Hủy",
     "cancelDownload": "Hủy tải xuống",
-    "legacy": "Cũ"
+    "legacy": "Cũ",
+    "api": "API"
   },
   "settings": {
     "modelSettings": {
@@ -636,6 +641,42 @@
         "label": "Hiển thị điểm mới",
         "description": "Hiển thị ghi chú phát hành sau khi Handy cập nhật"
       }
+    },
+    "api": {
+      "title": "API transcription",
+      "description": "Use Groq, OpenAI, or your own OpenAI-compatible /audio/transcriptions endpoint. Keys are stored in the system keyring.",
+      "privacyNotice": "Remote mode sends each recording to the selected provider. Local models remain offline.",
+      "add": "Add endpoint",
+      "active": "Active",
+      "activate": "Use",
+      "test": "Test",
+      "keyConfigured": "Key stored",
+      "keyMissing": "No key",
+      "keyNotRequired": "No key required",
+      "edit": "Edit endpoint",
+      "duplicate": "Duplicate endpoint",
+      "noModel": "No model",
+      "createTitle": "New endpoint",
+      "editTitle": "Edit endpoint",
+      "removeKey": "Remove key",
+      "auth": {
+        "none": "No authentication",
+        "bearer": "Bearer token",
+        "custom_header": "Custom header"
+      },
+      "fields": {
+        "name": "Name",
+        "baseUrl": "Base URL",
+        "path": "Transcription path",
+        "model": "Model",
+        "auth": "Authentication",
+        "headerName": "Header name",
+        "apiKey": "API key",
+        "apiKeyPlaceholder": "Leave blank to keep the stored key",
+        "timeout": "Timeout (seconds)",
+        "extraJson": "Extra JSON fields",
+        "sendLanguage": "Send language to the API"
+      }
     }
   },
   "footer": {
@@ -660,7 +701,9 @@
     "open": "Mở",
     "copy": "Sao chép",
     "clear": "Xóa",
-    "noOptionsFound": "Không tìm thấy tùy chọn"
+    "noOptionsFound": "Không tìm thấy tùy chọn",
+    "save": "Save",
+    "cancel": "Cancel"
   },
   "accessibility": {
     "permissionsDescription": "Handy cần quyền truy cập để gõ văn bản đã chuyển đổi.",

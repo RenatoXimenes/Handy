@@ -188,6 +188,7 @@ enum LoadedEngine {
     GigaAM(GigaAMModel),
     Canary(CanaryModel),
     Cohere(CohereModel),
+    CloudApi,
 }
 
 /// RAII guard that clears the `is_loading` flag and notifies waiters on drop.
@@ -535,6 +536,37 @@ impl TranscriptionManager {
             return Err(anyhow::anyhow!(error_msg));
         }
 
+        if matches!(model_info.engine_type, EngineType::CloudApi) {
+            {
+                let mut engine = self.lock_engine();
+                *engine = None;
+            }
+            {
+                let mut current_model = self.current_model_id.lock().unwrap();
+                *current_model = None;
+            }
+            {
+                let mut engine = self.lock_engine();
+                *engine = Some(LoadedEngine::CloudApi);
+            }
+            {
+                let mut current_model = self.current_model_id.lock().unwrap();
+                *current_model = Some(model_id.to_string());
+            }
+            self.touch_activity();
+            let _ = self.app_handle.emit(
+                "model-state-changed",
+                ModelStateEvent {
+                    event_type: "loading_completed".to_string(),
+                    model_id: Some(model_id.to_string()),
+                    model_name: Some(model_info.name.clone()),
+                    error: None,
+                },
+            );
+            info!("Selected API transcription model '{}'", model_id);
+            return Ok(());
+        }
+
         let model_path = self
             .model_manager
             .get_model_path(model_id)
@@ -705,6 +737,7 @@ impl TranscriptionManager {
                 })?;
                 LoadedEngine::Cohere(engine)
             }
+            EngineType::CloudApi => LoadedEngine::CloudApi,
         };
 
         // Update the current engine and model ID
@@ -785,6 +818,7 @@ impl TranscriptionManager {
             Some(LoadedEngine::TranscribeCpp(session)) => {
                 Some(session.model().backend().to_string())
             }
+            Some(LoadedEngine::CloudApi) => Some("api".to_string()),
             Some(_) => Some("onnx".to_string()),
             None => None,
         }
@@ -1196,7 +1230,7 @@ impl TranscriptionManager {
         }
 
         // Check if model is loaded, if not try to load it
-        {
+        let use_cloud_api = {
             // If the model is loading, wait for it to complete.
             let mut is_loading = self.is_loading.lock().unwrap();
             while *is_loading {
@@ -1207,6 +1241,10 @@ impl TranscriptionManager {
             if engine_guard.is_none() {
                 return Err(anyhow::anyhow!("Model is not loaded for transcription."));
             }
+            matches!(engine_guard.as_ref(), Some(LoadedEngine::CloudApi))
+        };
+        if use_cloud_api {
+            return self.transcribe_via_api(audio);
         }
 
         // Get current settings for configuration
@@ -1234,12 +1272,6 @@ impl TranscriptionManager {
             );
         }
 
-        // Whether the loaded transcribe-cpp model advertises
-        // Feature::InitialPrompt. Informational (logged below); the whisper
-        // run extension and the fuzzy-correction skip are gated on
-        // `model_is_whisper` instead, since non-whisper archs can advertise
-        // the feature while rejecting the whisper-kind extension.
-        let mut model_takes_initial_prompt = false;
         // Whether the loaded model is actually whisper-family (arch string).
         // Non-whisper archs (e.g. Voxtral Small) can advertise
         // Feature::InitialPrompt yet reject the whisper-kind run extension
@@ -1285,7 +1317,7 @@ impl TranscriptionManager {
             if let LoadedEngine::TranscribeCpp(session) = &engine {
                 let model = session.model();
                 let caps = model.capabilities();
-                model_takes_initial_prompt = model.supports(Feature::InitialPrompt);
+                let model_takes_initial_prompt = model.supports(Feature::InitialPrompt);
                 model_is_whisper = model.arch() == "whisper";
                 model_supports_translate = caps.supports_translate;
                 model_languages = caps.languages;
@@ -1429,6 +1461,9 @@ impl TranscriptionManager {
                             .map(|r| r.text)
                             .map_err(|e| anyhow::anyhow!("Cohere transcription failed: {}", e))
                     }
+                    LoadedEngine::CloudApi => Err(anyhow::anyhow!(
+                        "API transcription should not use the local engine path"
+                    )),
                 }
             }));
 
@@ -1532,6 +1567,69 @@ impl TranscriptionManager {
         self.maybe_unload_immediately("transcription");
 
         Ok(final_result)
+    }
+
+    fn transcribe_via_api(&self, audio: Vec<f32>) -> Result<String> {
+        let settings = get_settings(&self.app_handle);
+        let profile = settings
+            .active_transcription_endpoint()
+            .cloned()
+            .ok_or_else(|| anyhow::anyhow!(crate::asr_client::AsrError::MissingEndpoint))?;
+        let language = effective_language_for_model(
+            &settings,
+            self.model_manager.as_ref(),
+            crate::asr_client::API_TRANSCRIPTION_MODEL_ID,
+        );
+        let model_languages = self
+            .model_manager
+            .get_model_info(crate::asr_client::API_TRANSCRIPTION_MODEL_ID)
+            .map(|model| model.supported_languages)
+            .unwrap_or_default();
+        let output_language = resolve_output_language_evidence(
+            &settings,
+            Some(language.as_str()),
+            &model_languages,
+            false,
+        );
+        let profile_name = profile.name.clone();
+        // Batch transcription runs on a Tauri async worker. Move the API future
+        // to a plain OS thread so block_on never nests inside Tokio's runtime.
+        let result = std::thread::spawn(move || {
+            tauri::async_runtime::block_on(async {
+                let api_key = if matches!(
+                    profile.auth_type,
+                    crate::settings::TranscriptionAuthType::None
+                ) {
+                    None
+                } else {
+                    crate::secret_store::get_secret(&profile.id).await?
+                };
+                crate::asr_client::transcribe_samples(
+                    &profile,
+                    api_key.as_deref(),
+                    &audio,
+                    Some(language.as_str()),
+                )
+                .await
+                .map_err(|e| e.user_message())
+            })
+        })
+        .join()
+        .map_err(|_| anyhow::anyhow!("API transcription worker panicked"))?
+        .map_err(|e| anyhow::anyhow!(e))?;
+        let filtered = post_process_transcription_text(
+            result,
+            &settings,
+            false,
+            &output_language,
+            &model_languages,
+        );
+        info!(
+            "API transcription completed via '{}' ({} chars)",
+            profile_name,
+            filtered.len()
+        );
+        Ok(filtered)
     }
 }
 

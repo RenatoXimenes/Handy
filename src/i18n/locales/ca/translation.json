@@ -94,6 +94,10 @@
       "cohere-int8": {
         "name": "Cohere",
         "description": "Un model multilingüe gran, més lent, però molt precís."
+      },
+      "api-transcription": {
+        "name": "API Transcription",
+        "description": "Send audio to Groq, OpenAI, or a custom OpenAI-compatible endpoint. No local model is loaded."
       }
     },
     "errors": {
@@ -152,7 +156,8 @@
       "translation": "Pot traduir a l'anglès",
       "translate": "Tradueix",
       "streaming": "Mostra la transcripció en temps real mentre parleu"
-    }
+    },
+    "api": "API"
   },
   "settings": {
     "modelSettings": {
@@ -636,6 +641,42 @@
           "details": "La transcripció local de veu a text del Handy es basa en el transcribe.cpp i el ggml. Gràcies a la gran feina de Georgi Gerganov i dels col·laboradors."
         }
       }
+    },
+    "api": {
+      "title": "API transcription",
+      "description": "Use Groq, OpenAI, or your own OpenAI-compatible /audio/transcriptions endpoint. Keys are stored in the system keyring.",
+      "privacyNotice": "Remote mode sends each recording to the selected provider. Local models remain offline.",
+      "add": "Add endpoint",
+      "active": "Active",
+      "activate": "Use",
+      "test": "Test",
+      "keyConfigured": "Key stored",
+      "keyMissing": "No key",
+      "keyNotRequired": "No key required",
+      "edit": "Edit endpoint",
+      "duplicate": "Duplicate endpoint",
+      "noModel": "No model",
+      "createTitle": "New endpoint",
+      "editTitle": "Edit endpoint",
+      "removeKey": "Remove key",
+      "auth": {
+        "none": "No authentication",
+        "bearer": "Bearer token",
+        "custom_header": "Custom header"
+      },
+      "fields": {
+        "name": "Name",
+        "baseUrl": "Base URL",
+        "path": "Transcription path",
+        "model": "Model",
+        "auth": "Authentication",
+        "headerName": "Header name",
+        "apiKey": "API key",
+        "apiKeyPlaceholder": "Leave blank to keep the stored key",
+        "timeout": "Timeout (seconds)",
+        "extraJson": "Extra JSON fields",
+        "sendLanguage": "Send language to the API"
+      }
     }
   },
   "footer": {
@@ -663,7 +704,9 @@
     "open": "Obre",
     "copy": "Copia",
     "clear": "Neteja",
-    "noOptionsFound": "No s'ha trobat cap opció"
+    "noOptionsFound": "No s'ha trobat cap opció",
+    "save": "Save",
+    "cancel": "Cancel"
   },
   "accessibility": {
     "permissionsDescription": "El Handy necessita permisos d'accessibilitat per escriure el text transcrit.",

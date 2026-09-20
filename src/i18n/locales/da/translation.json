@@ -94,6 +94,10 @@
       "cohere-int8": {
         "name": "Cohere",
         "description": "En stor, langsommere, men meget nøjagtig flersproget model."
+      },
+      "api-transcription": {
+        "name": "API Transcription",
+        "description": "Send audio to Groq, OpenAI, or a custom OpenAI-compatible endpoint. No local model is loaded."
       }
     },
     "errors": {
@@ -152,7 +156,8 @@
       "translation": "Kan oversætte til engelsk",
       "translate": "Oversæt",
       "streaming": "Viser live transskription, mens du taler"
-    }
+    },
+    "api": "API"
   },
   "settings": {
     "modelSettings": {
@@ -636,6 +641,42 @@
           "details": "Handys lokale tale-til-tekst funktionalitet er bygget på transcribe.cpp og ggml. Tak for det fantastiske arbejde af Georgi Gerganov og bidragyderne."
         }
       }
+    },
+    "api": {
+      "title": "API transcription",
+      "description": "Use Groq, OpenAI, or your own OpenAI-compatible /audio/transcriptions endpoint. Keys are stored in the system keyring.",
+      "privacyNotice": "Remote mode sends each recording to the selected provider. Local models remain offline.",
+      "add": "Add endpoint",
+      "active": "Active",
+      "activate": "Use",
+      "test": "Test",
+      "keyConfigured": "Key stored",
+      "keyMissing": "No key",
+      "keyNotRequired": "No key required",
+      "edit": "Edit endpoint",
+      "duplicate": "Duplicate endpoint",
+      "noModel": "No model",
+      "createTitle": "New endpoint",
+      "editTitle": "Edit endpoint",
+      "removeKey": "Remove key",
+      "auth": {
+        "none": "No authentication",
+        "bearer": "Bearer token",
+        "custom_header": "Custom header"
+      },
+      "fields": {
+        "name": "Name",
+        "baseUrl": "Base URL",
+        "path": "Transcription path",
+        "model": "Model",
+        "auth": "Authentication",
+        "headerName": "Header name",
+        "apiKey": "API key",
+        "apiKeyPlaceholder": "Leave blank to keep the stored key",
+        "timeout": "Timeout (seconds)",
+        "extraJson": "Extra JSON fields",
+        "sendLanguage": "Send language to the API"
+      }
     }
   },
   "footer": {
@@ -663,7 +704,9 @@
     "open": "Åbn",
     "copy": "Kopiér",
     "clear": "Ryd",
-    "noOptionsFound": "Ingen muligheder fundet"
+    "noOptionsFound": "Ingen muligheder fundet",
+    "save": "Save",
+    "cancel": "Cancel"
   },
   "accessibility": {
     "permissionsDescription": "Handy har brug for tilgængelighedstilladelser for at skrive den transskriberede tekst.",
