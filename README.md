@@ -3,6 +3,7 @@
 [![Discord](https://img.shields.io/badge/Discord-%235865F2.svg?style=for-the-badge&logo=discord&logoColor=white)](https://discord.com/invite/WVBeWsNXK4)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Upstream](https://img.shields.io/badge/upstream-cjpais%2FHandy-blue)](https://github.com/cjpais/Handy)
+[![Download API Edition](https://img.shields.io/badge/download-API%20Edition-cc7aa5)](https://github.com/RenatoXimenes/Handy/releases/latest)
 
 > This is a community-maintained fork of
 > [cjpais/Handy](https://github.com/cjpais/Handy). It preserves Handy's local,
@@ -12,6 +13,12 @@ Handy is a cross-platform speech-to-text application. Press a shortcut, speak,
 and have the transcription pasted into the application you are using. Choose
 between local models for maximum privacy or a compatible remote API when fast
 turnaround and low local resource usage are the priority.
+
+**[Download the API Edition](https://github.com/RenatoXimenes/Handy/releases/latest)**
+· [Configure Groq](#groq-in-six-steps) ·
+[Read the privacy and security model](docs/API_TRANSCRIPTION.md)
+
+![Handy API Transcription settings with Groq connected and active](docs/assets/groq-api-transcription.png)
 
 ## What This Fork Adds
 
@@ -76,27 +83,30 @@ provider:
 
 ### Installation
 
-The releases and package-manager commands below install **upstream Handy** and
-do not yet contain this fork's API additions. To use the additions, clone this
-repository and build the `api-transcription` branch by following
-[BUILD.md](BUILD.md). A fork-specific release will be linked here when a tested
-installer is published. Automatic updates are disabled in fork builds until
-that release channel exists, preventing an upstream update from removing the
-fork-specific features.
+Prebuilt fork packages are published only on this repository's
+[Releases page](https://github.com/RenatoXimenes/Handy/releases/latest). Packages
+from `handy.computer`, Homebrew, Winget or the upstream repository do **not**
+contain API transcription.
 
-1. Download the latest release from the [releases page](https://github.com/cjpais/Handy/releases) or the [website](https://handy.computer)
-   - **macOS**: Also available via [Homebrew cask](https://formulae.brew.sh/cask/handy): `brew install --cask handy`
-   - **Windows**: Also available via [winget](https://github.com/microsoft/winget-pkgs): `winget install cjpais.Handy` \
-     **Note:** The Homebrew cask and winget package are not maintained by the Handy developers.
-   - **Debian/Ubuntu**: Install the downloaded `.deb` with APT so required dependencies are installed automatically:
-     ```bash
-     sudo apt install ./Handy_*.deb
-     ```
-     Do not use `dpkg -i` unless the dependencies are already installed. If you already used it, run `sudo apt --fix-broken install`.
-2. Install the application
-3. Launch Handy and grant necessary system permissions (microphone, accessibility)
-4. Configure your preferred keyboard shortcuts in Settings
-5. Start transcribing!
+#### Debian / Ubuntu (x86_64)
+
+1. Download the `.deb` from the latest
+   [API Edition release](https://github.com/RenatoXimenes/Handy/releases/latest).
+2. Optionally compare its SHA-256 digest with `SHA256SUMS` from the release.
+3. Install it with APT so system dependencies are resolved:
+
+   ```bash
+   sudo apt install ./Handy_API_Edition_*_amd64.deb
+   ```
+
+4. Launch Handy and grant microphone permissions.
+5. Follow [Groq in Six Steps](#groq-in-six-steps).
+
+The first release is available for 64-bit Debian/Ubuntu. For other Linux
+architectures, macOS or Windows, build the `api-transcription` branch by
+following [BUILD.md](BUILD.md). Automatic updates are disabled in fork builds
+until the fork has its own signed update channel, preventing an upstream update
+from silently removing the fork-specific features.
 
 ### Groq in Six Steps
 

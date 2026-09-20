@@ -17,7 +17,8 @@ local engines. The feature targets services that implement the OpenAI-compatible
 
 ## Configure Groq
 
-1. Build and launch this fork.
+1. Install the API Edition from this fork's Releases page, or build and launch
+   the `api-transcription` branch.
 2. Open **Settings → Models → API transcription**.
 3. Edit the **Groq** preset.
 4. Enter your API key. The key field is intentionally blank when the dialog is

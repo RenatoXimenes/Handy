@@ -1,10 +1,12 @@
 [package]
 name = "handy"
-version = "0.9.7"
-description = "Handy"
-authors = ["cjpais"]
+version = "0.9.7-api.1"
+description = "Handy API Transcription Edition"
+authors = ["Renato Ximenes", "cjpais"]
 edition = "2021"
 license = "MIT"
+homepage = "https://github.com/RenatoXimenes/Handy"
+repository = "https://github.com/RenatoXimenes/Handy"
 default-run = "handy"
 
 [profile.dev]
