@@ -75,5 +75,11 @@
         "template": "nsis/installer.nsi"
       }
     }
+  },
+  "plugins": {
+    "updater": {
+      "endpoints": [],
+      "pubkey": ""
+    }
   }
 }
