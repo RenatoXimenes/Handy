@@ -1,8 +1,10 @@
-# API transcription
+# Vozel API transcription
 
-This fork adds a remote transcription engine without removing any of Handy's
-local engines. The feature targets services that implement the OpenAI-compatible
-`POST /audio/transcriptions` contract.
+Vozel adds a remote transcription engine without removing the local engines
+inherited from Handy. The feature targets services that implement the
+OpenAI-compatible `POST /audio/transcriptions` contract. Vozel is an
+independent fork and is not affiliated with or endorsed by the upstream
+project.
 
 ## When to use it
 
@@ -22,7 +24,7 @@ local engines. The feature targets services that implement the OpenAI-compatible
 2. Open **Settings → Models → API transcription**.
 3. Edit the **Groq** preset.
 4. Enter your API key. The key field is intentionally blank when the dialog is
-   reopened; Handy never sends the stored value back to the webview.
+   reopened; Vozel never sends the stored value back to the webview.
 5. Keep `whisper-large-v3-turbo`, or choose another transcription model that
    Groq exposes through the same endpoint.
 6. Save, click **Test**, then click **Use**.
@@ -34,7 +36,7 @@ Windows (`Cmd+Shift+D` on macOS) and enable **Always-On Microphone**.
 
 ## Request contract
 
-Handy sends a multipart form with:
+Vozel sends a multipart form with:
 
 - `file`: 16 kHz, mono, 16-bit WAV;
 - `model`: the configured model name;
@@ -71,7 +73,7 @@ preset to create an editable custom profile.
 ## Privacy and cost
 
 Remote mode sends each completed recording to the selected endpoint. Review the
-provider's retention, privacy and billing policies before enabling it. Handy
+provider's retention, privacy and billing policies before enabling it. Vozel
 does not log API keys. Production builds also redact transcription text from
 application logs.
 

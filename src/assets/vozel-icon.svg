@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" role="img" aria-label="Vozel">
+  <rect x="24" y="24" width="976" height="976" rx="240" fill="#142831"/>
+  <path d="M178 512h116l72-177 119 354 105-339 71 162h185" fill="none" stroke="#55D6C2" stroke-width="72" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="846" cy="512" r="40" fill="#FFC86B"/>
+</svg>

@@ -19,7 +19,7 @@ on:
       asset-prefix:
         required: false
         type: string
-        default: "handy"
+        default: "vozel"
       asset-name-pattern:
         required: false
         type: string
@@ -395,7 +395,7 @@ jobs:
           # real files and draw ldconfig warnings (issue #1639).
           # deb.files key = destination in package, value = source on disk
           jq --arg so1 "$ORT_DIR/lib/libonnxruntime.so.1" \
-            '.bundle.linux.deb.files["/usr/lib/Handy/libonnxruntime.so.1"] = $so1' \
+            '.bundle.linux.deb.files["/usr/lib/Vozel/libonnxruntime.so.1"] = $so1' \
             src-tauri/tauri.conf.json > tmp.json && mv tmp.json src-tauri/tauri.conf.json
 
       # Windows x64 links a BASELINE ONNX Runtime dynamically instead of statically
@@ -587,10 +587,10 @@ jobs:
           echo "=== Frameworks contents ==="
           ls -la "$APP/Contents/Frameworks/" | grep onnx || true
           echo "=== Binary linked libs ==="
-          otool -L "$APP/Contents/MacOS/handy" | grep onnx || true
+          otool -L "$APP/Contents/MacOS/vozel" | grep onnx || true
           echo "=== Checking all @rpath deps are satisfied ==="
           # Extract every @rpath lib the binary needs
-          otool -L "$APP/Contents/MacOS/handy" | grep '@rpath/' | awk '{print $1}' | while read dep; do
+          otool -L "$APP/Contents/MacOS/vozel" | grep '@rpath/' | awk '{print $1}' | while read dep; do
             libname=$(basename "$dep")
             if [ ! -f "$APP/Contents/Frameworks/$libname" ]; then
               echo "MISSING: $libname not found in Frameworks/"
@@ -616,7 +616,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          # The runtime smoke test launches the packaged handy binary, which links
+          # The runtime smoke test launches the packaged Vozel binary, which links
           # GTK (via tao) even for the headless --list-devices path and therefore
           # needs a display to start. CI runners are headless, so provide a virtual
           # X server via xvfb-run.
@@ -661,9 +661,9 @@ jobs:
               export VK_ICD_FILENAMES="$vulkan_icd"
             fi
             HANDY_NO_GTK_LAYER_SHELL=1 \
-            LD_LIBRARY_PATH="${root}/usr/lib/Handy:${root}/usr/lib${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}" \
-              xvfb-run -a "${root}/usr/bin/handy" --list-devices \
-                >/tmp/handy-package-smoke.log 2>&1
+            LD_LIBRARY_PATH="${root}/usr/lib/Vozel:${root}/usr/lib${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}" \
+              xvfb-run -a "${root}/usr/bin/vozel" --list-devices \
+                >/tmp/vozel-package-smoke.log 2>&1
             echo "${label} --list-devices smoke passed"
           }
 
@@ -672,14 +672,14 @@ jobs:
               echo "Auditing deb package: ${deb}"
               listing="$(mktemp)"
               dpkg-deb -c "$deb" > "$listing"
-              require_pattern "$listing" 'usr/bin/handy$' "handy binary"
-              require_pattern "$listing" 'usr/lib/Handy/libtranscribe\.so(\.[0-9]+)+$' "transcribe runtime library (SONAME)"
-              require_pattern "$listing" 'usr/lib/Handy/libggml-cpu.*\.so' "ggml CPU backend module"
+              require_pattern "$listing" 'usr/bin/vozel$' "Vozel binary"
+              require_pattern "$listing" 'usr/lib/Vozel/libtranscribe\.so(\.[0-9]+)+$' "transcribe runtime library (SONAME)"
+              require_pattern "$listing" 'usr/lib/Vozel/libggml-cpu.*\.so' "ggml CPU backend module"
               if [[ "${{ inputs.platform }}" == *"ubuntu-22.04"* && "${{ inputs.target }}" == "x86_64-unknown-linux-gnu" ]]; then
-                require_pattern "$listing" 'usr/lib/Handy/libonnxruntime\.so\.[0-9]+$' "ONNX Runtime library (SONAME)"
+                require_pattern "$listing" 'usr/lib/Vozel/libonnxruntime\.so\.[0-9]+$' "ONNX Runtime library (SONAME)"
               fi
               # Handy's libs must stay out of the ldconfig-scanned /usr/lib
-              # (issue #1639): app-private libs belong in /usr/lib/Handy only.
+              # (issue #1639): app-private libs belong in /usr/lib/Vozel only.
               # `[^/]+` excludes the Handy/ subdir, so only direct hits match.
               if grep -Eq 'usr/lib/[^/]+\.so' "$listing"; then
                 echo "ERROR: libraries installed directly into /usr/lib (issue #1639):" >&2
@@ -702,9 +702,9 @@ jobs:
               echo "Auditing rpm package: ${rpm_pkg}"
               listing="$(mktemp)"
               rpm -qpl "$rpm_pkg" > "$listing"
-              require_pattern "$listing" '/usr/bin/handy$' "handy binary"
-              require_pattern "$listing" '/usr/lib/Handy/libtranscribe\.so(\.[0-9]+)+$' "transcribe runtime library (SONAME)"
-              require_pattern "$listing" '/usr/lib/Handy/libggml-cpu.*\.so' "ggml CPU backend module"
+              require_pattern "$listing" '/usr/bin/vozel$' "Vozel binary"
+              require_pattern "$listing" '/usr/lib/Vozel/libtranscribe\.so(\.[0-9]+)+$' "transcribe runtime library (SONAME)"
+              require_pattern "$listing" '/usr/lib/Vozel/libggml-cpu.*\.so' "ggml CPU backend module"
               # Same /usr/lib pollution guard as the deb audit (issue #1639).
               if grep -Eq 'usr/lib/[^/]+\.so' "$listing"; then
                 echo "ERROR: libraries installed directly into /usr/lib (issue #1639):" >&2
@@ -719,12 +719,12 @@ jobs:
             for appimage in "${BUNDLE_DIR}"/appimage/*.AppImage; do
               echo "Auditing AppImage package: ${appimage}"
               workdir="$(mktemp -d)"
-              cp "$appimage" "${workdir}/Handy.AppImage"
-              chmod +x "${workdir}/Handy.AppImage"
+              cp "$appimage" "${workdir}/Vozel.AppImage"
+              chmod +x "${workdir}/Vozel.AppImage"
               (
                 cd "$workdir"
-                ./Handy.AppImage --appimage-extract >/dev/null
-                require_path "squashfs-root/usr/bin/handy" "AppImage handy binary"
+                ./Vozel.AppImage --appimage-extract >/dev/null
+                require_path "squashfs-root/usr/bin/vozel" "AppImage Vozel binary"
                 # Gear Lever and other integration tools consume the root entry;
                 # appimagetool does not update the copy under usr/share/applications.
                 desktop_file="$(find squashfs-root -maxdepth 1 -type f -name '*.desktop' -print -quit)"
@@ -770,9 +770,9 @@ jobs:
                 # llvmpipe is intentionally not exposed as a compute device by
                 # ggml, but reaching this log proves the module loaded against a
                 # usable system Vulkan loader/ICD instead of failing silently.
-                if ! grep -q 'load_backend: loaded Vulkan backend' /tmp/handy-package-smoke.log; then
+                if ! grep -q 'load_backend: loaded Vulkan backend' /tmp/vozel-package-smoke.log; then
                   echo "ERROR: AppImage could not initialize its Vulkan backend with a usable system ICD" >&2
-                  cat /tmp/handy-package-smoke.log >&2
+                  cat /tmp/vozel-package-smoke.log >&2
                   exit 1
                 fi
               )
@@ -832,9 +832,9 @@ jobs:
           function Assert-PackageContents {
             param([string]$Root, [string]$Label)
 
-            $handy = Get-ChildItem $Root -Filter "handy.exe" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1
-            if (-not $handy) {
-              throw "$Label package is missing handy.exe"
+            $vozel = Get-ChildItem $Root -Filter "vozel.exe" -Recurse -ErrorAction SilentlyContinue | Select-Object -First 1
+            if (-not $vozel) {
+              throw "$Label package is missing vozel.exe"
             }
             foreach ($dll in $stagedDlls) {
               if (-not (Get-ChildItem $Root -Filter $dll.Name -Recurse -ErrorAction SilentlyContinue)) {
@@ -842,10 +842,10 @@ jobs:
               }
             }
 
-            $deviceOutput = (& $handy.FullName --list-devices | Out-String)
+            $deviceOutput = (& $vozel.FullName --list-devices | Out-String)
             $deviceOutput | Write-Host
             if ($LASTEXITCODE -ne 0) {
-              throw "$Label handy.exe --list-devices failed"
+              throw "$Label vozel.exe --list-devices failed"
             }
             if ("${{ inputs.target }}" -like "aarch64*" -and $deviceOutput -match "kind=(vulkan|cuda|metal|gpu)") {
               throw "$Label Windows ARM64 package unexpectedly exposed a GPU compute device"

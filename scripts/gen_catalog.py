@@ -3,12 +3,13 @@
 # dependencies = ["huggingface_hub", "fsspec"]
 # ///
 """
-Handy model catalog generator.
+Vozel model catalog generator.
 
-Merges three sources into one catalog.json:
+Merges four sources into one catalog.json:
   1. HF card `transcribe_cpp` block  -> capabilities + benchmarks (canonical)
   2. a tiny GGUF header range-read    -> display labels only
   3. local CURATION (this file)       -> recommended set, editorial descriptions
+  4. scripts/vozel_models.json        -> independently distributed models
 
 Emits catalog.json to be committed and `include_str!`'d into the Rust binary.
 Run:  HF_TOKEN=$(hf auth token) uv run gen_catalog.py [out_path]
@@ -275,8 +276,11 @@ def main():
     if failures:
         print(f"catalog generation failed for {len(failures)} repo(s)", file=sys.stderr)
         raise SystemExit(1)
+    local_models_path = os.path.join(os.path.dirname(__file__), "vozel_models.json")
+    with open(local_models_path, encoding="utf-8") as local_models_file:
+        models.extend(json.load(local_models_file))
     models.sort(key=lambda m: (not m["recommended"], m["recommended_rank"] or 1e9,
-                               m["family"], -(m["speed_score"] or 0), m["slug"]))
+                               m["family"], -(m.get("speed_score") or 0), m["slug"]))
     catalog = {
         "catalog_version": CATALOG_VERSION,
         "generated_at": datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds"),

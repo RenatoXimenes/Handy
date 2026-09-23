@@ -1,4 +1,4 @@
-# NixOS module for Handy speech-to-text
+# NixOS module for Vozel speech-to-text
 #
 # Handles system-level configuration that the package wrapper cannot:
 #   - udev rule for /dev/uinput (rdev grab() needs it for virtual input)
@@ -7,12 +7,12 @@
 #
 # Usage in your flake:
 #
-#   inputs.handy.url = "github:cjpais/Handy";
+#   inputs.vozel.url = "github:RenatoXimenes/Handy";
 #
 #   nixosConfigurations.myhost = nixpkgs.lib.nixosSystem {
 #     modules = [
-#       handy.nixosModules.default
-#       { programs.handy.enable = true; }
+#       vozel.nixosModules.default
+#       { programs.vozel.enable = true; }
 #     ];
 #   };
 {
@@ -22,16 +22,16 @@
   ...
 }:
 let
-  cfg = config.programs.handy;
+  cfg = config.programs.vozel;
 in
 {
-  options.programs.handy = {
-    enable = lib.mkEnableOption "Handy offline speech-to-text";
+  options.programs.vozel = {
+    enable = lib.mkEnableOption "Vozel offline speech-to-text";
 
     package = lib.mkOption {
       type = lib.types.package;
-      defaultText = lib.literalExpression "handy.packages.\${system}.handy";
-      description = "The Handy package to use.";
+      defaultText = lib.literalExpression "vozel.packages.\${system}.vozel";
+      description = "The Vozel package to use.";
     };
   };
 

@@ -1,8 +1,21 @@
-# Fork changes
+# Vozel fork changes
 
-This document records changes maintained by the API Transcription Edition on
-top of upstream [cjpais/Handy](https://github.com/cjpais/Handy). The publication
+This document records changes maintained by Vozel on top of upstream
+[cjpais/Handy](https://github.com/cjpais/Handy). Vozel is independently
+maintained and is not affiliated with or endorsed by upstream. The publication
 branch is based on upstream `main` after the v0.9.7 release.
+
+The repository URL remains
+[RenatoXimenes/Handy](https://github.com/RenatoXimenes/Handy) until its rename
+is approved. On first launch, Vozel copies settings, models, recordings and
+history from the legacy Handy data location without deleting the originals.
+
+## Vozel identity and local model
+
+- Uses a separate app identifier, original icons and its own support links.
+- Offers the Ottema AI Nemotron 3.5 ASR PT-BR fine-tune as an optional,
+  SHA-256-verified GGUF download. The model is subject to OpenMDW-1.1.
+- Preserves upstream attribution and historical release provenance.
 
 ## Remote transcription
 

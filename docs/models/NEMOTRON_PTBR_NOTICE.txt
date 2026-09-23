@@ -1,0 +1,18 @@
+Nemotron 3.5 ASR PT-BR — origin and license notice
+
+Fine-tuned checkpoint: Ottema AI, ottema/nemotron-3.5-asr-ptbr
+https://huggingface.co/ottema/nemotron-3.5-asr-ptbr
+Checkpoint revision: 28f18acf7a1d26d088955d4de5fdb6c7ebff2e52
+
+Base model: NVIDIA, nvidia/nemotron-3.5-asr-streaming-0.6b
+https://huggingface.co/nvidia/nemotron-3.5-asr-streaming-0.6b
+
+Conversion: Q8_0 GGUF for transcribe.cpp, using
+scripts/convert-parakeet.py at commit 49a333e572c76970ea139b14ef62095e2e5ed9b4.
+
+The model is distributed under OpenMDW License Agreement, version 1.1.
+The accompanying OpenMDW-1.1.txt is the license text. This model is separate
+from the Vozel source code, which is licensed under MIT.
+
+The GGUF conversion has been checked with a short local transcription sample.
+No accuracy or performance claim is made for the converted file.

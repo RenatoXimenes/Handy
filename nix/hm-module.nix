@@ -1,8 +1,8 @@
-# Home-manager module for Handy speech-to-text
+# Home-manager module for Vozel speech-to-text
 #
 # Provides a systemd user service for autostart.
-# Usage: imports = [ handy.homeManagerModules.default ];
-#        services.handy.enable = true;
+# Usage: imports = [ vozel.homeManagerModules.default ];
+#        services.vozel.enable = true;
 {
   config,
   lib,
@@ -10,28 +10,28 @@
   ...
 }:
 let
-  cfg = config.services.handy;
+  cfg = config.services.vozel;
 in
 {
-  options.services.handy = {
-    enable = lib.mkEnableOption "Handy speech-to-text user service";
+  options.services.vozel = {
+    enable = lib.mkEnableOption "Vozel speech-to-text user service";
 
     package = lib.mkOption {
       type = lib.types.package;
-      defaultText = lib.literalExpression "handy.packages.\${system}.handy";
-      description = "The Handy package to use.";
+      defaultText = lib.literalExpression "vozel.packages.\${system}.vozel";
+      description = "The Vozel package to use.";
     };
   };
 
   config = lib.mkIf cfg.enable {
-    systemd.user.services.handy = {
+    systemd.user.services.vozel = {
       Unit = {
-        Description = "Handy speech-to-text";
+        Description = "Vozel speech-to-text";
         After = [ "graphical-session.target" ];
         PartOf = [ "graphical-session.target" ];
       };
       Service = {
-        ExecStart = "${cfg.package}/bin/handy";
+        ExecStart = "${cfg.package}/bin/vozel";
         Restart = "on-failure";
         RestartSec = 5;
       };

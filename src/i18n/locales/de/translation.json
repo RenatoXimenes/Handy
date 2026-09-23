@@ -105,7 +105,7 @@
     },
     "permissions": {
       "title": "Berechtigungen erforderlich",
-      "description": "Handy benötigt einige Berechtigungen, um richtig zu funktionieren.",
+      "description": "Vozel benötigt einige Berechtigungen, um richtig zu funktionieren.",
       "microphone": {
         "title": "Mikrofonzugriff",
         "description": "Erforderlich, um deine Stimme für die Transkription zu hören."
@@ -180,13 +180,13 @@
       "searchPlaceholder": "Modelle nach Namen suchen…",
       "rescan": {
         "label": "Neu scannen",
-        "tooltip": "Erneut nach Modellen scannen, die außerhalb von Handy zum Modellordner oder Hugging-Face-Cache hinzugefügt wurden"
+        "tooltip": "Erneut nach Modellen scannen, die außerhalb von Vozel zum Modellordner oder Hugging-Face-Cache hinzugefügt wurden"
       }
     },
     "general": {
       "title": "Allgemein",
       "shortcut": {
-        "title": "Handy-Tastenkürzel",
+        "title": "Vozel-Tastenkürzel",
         "description": "Tastenkürzel für die Sprachaufnahme konfigurieren",
         "loading": "Tastenkürzel werden geladen...",
         "none": "Keine Tastenkürzel konfiguriert",
@@ -298,11 +298,11 @@
       },
       "autostart": {
         "label": "Beim Start ausführen",
-        "description": "Handy automatisch beim Anmelden starten."
+        "description": "Vozel automatisch beim Anmelden starten."
       },
       "showTrayIcon": {
         "label": "Taskleistensymbol anzeigen",
-        "description": "Das Handy-Symbol in der Taskleiste anzeigen."
+        "description": "Das Vozel-Symbol in der Taskleiste anzeigen."
       },
       "overlay": {
         "style": {
@@ -498,7 +498,7 @@
       },
       "updateChecks": {
         "label": "Nach Updates suchen",
-        "description": "Automatisch nach neuen Versionen von Handy suchen",
+        "description": "Automatisch nach neuen Versionen von Vozel suchen",
         "lockedDescription": "Durch Systemkonfiguration deaktiviert (HANDY_DISABLE_UPDATER)"
       },
       "soundTheme": {
@@ -576,7 +576,7 @@
       },
       "keyboardDiagnostic": {
         "title": "Tastatur-Diagnose",
-        "description": "Prüft, ob Tastaturereignisse Handy erreichen. Es wird nur die Anzahl der Ereignisse erfasst — niemals, welche Tasten du drückst.",
+        "description": "Prüft, ob Tastaturereignisse Vozel erreichen. Es wird nur die Anzahl der Ereignisse erfasst — niemals, welche Tasten du drückst.",
         "run": "10-Sekunden-Diagnose starten",
         "running": "Lauscht… drücke dein Tastenkürzel ein paar Mal (z. B. Option+Space)",
         "secureInputLabel": "Secure Input",
@@ -590,7 +590,7 @@
         "mouse": "Maus",
         "verdictBlocked": "Secure Input blockiert Tastenereignisse — Tastenkürzel mit einer normalen Taste können erst wieder funktionieren, wenn das behoben ist.",
         "verdictSuspicious": "Es kamen Modifikator-Ereignisse an, aber keine Tastenereignisse — irgendetwas unterdrückt Tasten, obwohl Secure Input als deaktiviert gemeldet wird. Bitte melde das auf GitHub.",
-        "verdictOk": "Tastenereignisse erreichen Handy normal.",
+        "verdictOk": "Tastenereignisse erreichen Vozel normal.",
         "verdictNoEvents": "Keine Ereignisse erfasst — hast du während des Tests Tasten gedrückt?",
         "failed": "Diagnose fehlgeschlagen: {{error}}"
       },
@@ -613,11 +613,11 @@
       "title": "Info",
       "version": {
         "title": "Version",
-        "description": "Aktuelle Version von Handy"
+        "description": "Aktuelle Version von Vozel"
       },
       "appDataDirectory": {
         "title": "App-Datenverzeichnis",
-        "description": "Speicherort der Handy-Daten"
+        "description": "Speicherort der Vozel-Daten"
       },
       "sourceCode": {
         "title": "Quellcode",
@@ -626,7 +626,7 @@
       },
       "supportDevelopment": {
         "title": "Entwicklung unterstützen",
-        "description": "Hilf uns, Handy weiterzuentwickeln",
+        "description": "Hilf uns, Vozel weiterzuentwickeln",
         "button": "Spenden"
       },
       "acknowledgments": {
@@ -634,12 +634,12 @@
         "ggml": {
           "title": "ggml",
           "description": "Hochleistungs-Inferenz des Whisper-Spracherkennungsmodells von OpenAI",
-          "details": "Handy verwendet ggml für schnelle, lokale Sprach-zu-Text-Verarbeitung. Dank an Georgi Gerganov und die Mitwirkenden für ihre großartige Arbeit."
+          "details": "Vozel verwendet ggml für schnelle, lokale Sprach-zu-Text-Verarbeitung. Dank an Georgi Gerganov und die Mitwirkenden für ihre großartige Arbeit."
         }
       },
       "whatsNewUpdates": {
         "label": "Neuerungen anzeigen",
-        "description": "Versionshinweise nach Handy-Updates anzeigen"
+        "description": "Versionshinweise nach Vozel-Updates anzeigen"
       }
     },
     "api": {
@@ -706,7 +706,7 @@
     "cancel": "Cancel"
   },
   "accessibility": {
-    "permissionsDescription": "Handy benötigt Bedienungshilfen-Berechtigungen, um transkribierten Text einzugeben.",
+    "permissionsDescription": "Vozel benötigt Bedienungshilfen-Berechtigungen, um transkribierten Text einzugeben.",
     "openSettings": "Systemeinstellungen öffnen"
   },
   "errors": {
@@ -729,11 +729,11 @@
   },
   "appLanguage": {
     "title": "Anwendungssprache",
-    "description": "Sprache der Handy-Oberfläche ändern"
+    "description": "Sprache der Vozel-Oberfläche ändern"
   },
   "theme": {
     "title": "Anwendungsdesign",
-    "description": "Wählen Sie, ob Handy dem Systemthema folgt oder hell bzw. dunkel bleibt",
+    "description": "Wählen Sie, ob Vozel dem Systemthema folgt oder hell bzw. dunkel bleibt",
     "options": {
       "system": "System",
       "light": "Hell",
@@ -745,7 +745,7 @@
     "processing": "Verarbeite..."
   },
   "whatsNew": {
-    "title": "Neu in Handy v{{version}}"
+    "title": "Neu in Vozel v{{version}}"
   },
   "secureInput": {
     "blockedWithCulprit_one": "{{name}} blockiert möglicherweise 1 Tastenkürzel",

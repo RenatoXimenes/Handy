@@ -2,11 +2,11 @@
 set -euo pipefail
 
 text=${1-}
-mode=${HANDY_PASTE_MODE:-auto}
+mode=${VOZEL_PASTE_MODE:-auto}
 
 for command in xdotool xprop xsel timeout; do
   if ! command -v "$command" >/dev/null 2>&1; then
-    printf 'handy-smart-paste: missing dependency: %s\n' "$command" >&2
+    printf 'vozel-smart-paste: missing dependency: %s\n' "$command" >&2
     exit 1
   fi
 done
@@ -27,7 +27,7 @@ case "$mode" in
     ;;
   terminal|standard) ;;
   *)
-    printf 'handy-smart-paste: HANDY_PASTE_MODE must be auto, terminal, or standard\n' >&2
+    printf 'vozel-smart-paste: VOZEL_PASTE_MODE must be auto, terminal, or standard\n' >&2
     exit 2
     ;;
 esac

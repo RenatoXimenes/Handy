@@ -1,4 +1,4 @@
-//! Portable mode support for Handy.
+//! Portable mode support for Vozel, including legacy marker compatibility.
 //!
 //! When a file named `portable` exists next to the executable, all user data
 //! (settings, models, recordings, database, logs) is stored in a `Data/`
@@ -27,7 +27,7 @@ pub fn init() {
             // empty/invalid marker alongside an existing Data/ dir, this is a
             // real portable install — upgrade the marker in place.
             eprintln!("[portable] upgrading legacy empty marker to magic string");
-            let _ = std::fs::write(&marker_path, "Handy Portable Mode");
+            let _ = std::fs::write(&marker_path, "Vozel Portable Mode");
             true
         } else {
             false
@@ -104,7 +104,10 @@ pub fn store_path(relative: &str) -> PathBuf {
 /// Extracted for testability.
 fn is_valid_portable_marker(path: &std::path::Path) -> bool {
     std::fs::read_to_string(path)
-        .map(|s| s.trim().starts_with("Handy Portable Mode"))
+        .map(|s| {
+            let marker = s.trim();
+            marker.starts_with("Vozel Portable Mode") || marker.starts_with("Handy Portable Mode")
+        })
         .unwrap_or(false)
 }
 

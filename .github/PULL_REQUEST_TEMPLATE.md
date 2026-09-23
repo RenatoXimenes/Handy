@@ -1,22 +1,11 @@
 ## Before Submitting This PR
 
-<!--
-HANDY IS UNDERGOING A FEATURE FREEZE. IF YOU ARE SUBMITTING A PR WHICH IS A NEW FEATURE THAT THE COMMUNITY HAS NOT ASKED FOR: PREPARE TO BE REJECTED. IF THE COMMUNITY HAS ASKED FOR IT, OR YOU HAVE EXPLICITLY GATHERED SUPPORT IT MAY STILL BE CONSIDERED.
-
-BUG FIXES ARE THE TOP PRIORITY. THERE ARE 60+ ISSUES TO FIX.
--->
-
-**Please submit only one fix or feature per pull request. Pull requests containing multiple fixes or features will likely be closed.**
+**Please submit one focused change per pull request.**
 
 **Please confirm you have done the following:**
 
-- [ ] I have searched [existing issues](https://github.com/cjpais/Handy/issues) and [pull requests](https://github.com/cjpais/Handy/pulls) (including closed ones) to ensure this isn't a duplicate
-- [ ] I have read [CONTRIBUTING.md](https://github.com/cjpais/Handy/blob/main/CONTRIBUTING.md)
-
-**If this is a feature or change that was previously closed/rejected:**
-
-- [ ] I have explained in the description below why this should be reconsidered
-- [ ] I have gathered community feedback (link to discussion below)
+- [ ] I have searched [Vozel issues](https://github.com/RenatoXimenes/Handy/issues) and [pull requests](https://github.com/RenatoXimenes/Handy/pulls) (including closed ones)
+- [ ] I have read [CONTRIBUTING.md](../../CONTRIBUTING.md)
 
 ## Human Written Description
 
@@ -36,21 +25,6 @@ include a human-written description.
 <!-- If reopening something previously closed, explain why this should be reconsidered -->
 
 Fixes #
-Discussion:
-
-## Community Feedback
-
-<!--
-PRs with community support are much more likely to be merged.
-
-For features: Link to a discussion where community members have expressed interest.
-For bug fixes: Link to the issue where others have confirmed the bug.
-
-If you haven't gathered feedback yet, consider starting a discussion first:
-https://github.com/cjpais/Handy/discussions
-
-It is not explicitly required to gather feedback, but it certainly helps your PR get merged.
--->
 
 ## Testing
 

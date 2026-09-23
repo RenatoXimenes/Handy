@@ -1,10 +1,10 @@
-# Security policy
+# Vozel security policy
 
 ## Supported code
 
-Security fixes for the API Transcription Edition are maintained on the
-repository's default publication branch. Upstream Handy issues that are not
-specific to this fork should be reported to the upstream project.
+Security fixes for Vozel are maintained on this repository's default
+publication branch. This independent fork is not an upstream Handy support
+channel; upstream-only issues belong in the upstream project.
 
 ## Reporting a vulnerability
 
@@ -21,7 +21,7 @@ Include:
 - logs with secrets and transcription contents removed.
 
 For ordinary, non-sensitive bugs, open a public issue and state that the problem
-affects the API Transcription Edition.
+affects Vozel.
 
 ## Credential design
 

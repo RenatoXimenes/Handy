@@ -48,7 +48,7 @@ define_class!(
     // SAFETY: NSObject has no subclassing requirements and the ivars are
     // plain Rust values guarded by a Mutex.
     #[unsafe(super(NSObject))]
-    #[name = "HandyPasteProvider"]
+    #[name = "VozelPasteProvider"]
     #[ivars = ProviderIvars]
     pub struct HandyPasteProvider;
 

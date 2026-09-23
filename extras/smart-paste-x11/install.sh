@@ -2,7 +2,7 @@
 set -euo pipefail
 
 source_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
-target="$HOME/.local/bin/handy-smart-paste"
+target="$HOME/.local/bin/vozel-smart-paste"
 
 for command in xdotool xprop xsel timeout; do
   if ! command -v "$command" >/dev/null 2>&1; then
@@ -13,7 +13,7 @@ for command in xdotool xprop xsel timeout; do
 done
 
 mkdir -p "$HOME/.local/bin"
-install -m 0755 "$source_dir/handy-smart-paste" "$target"
+install -m 0755 "$source_dir/vozel-smart-paste" "$target"
 
 printf 'Installed: %s\n' "$target"
-printf 'In Handy, select paste method "External script" and choose that path.\n'
+printf 'In Vozel, select paste method "External script" and choose that path.\n'

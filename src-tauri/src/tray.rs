@@ -191,26 +191,28 @@ fn windows_taskbar_theme() -> Option<AppTheme> {
 pub fn get_icon_path(theme: AppTheme, state: TrayIconState, warning: bool) -> &'static str {
     if warning && state == TrayIconState::Idle {
         return match theme {
-            AppTheme::Dark => "resources/tray_idle_warning.png",
-            AppTheme::Light => "resources/tray_idle_warning_dark.png",
+            AppTheme::Dark => "resources/vozel_tray_idle_warning.png",
+            AppTheme::Light => "resources/vozel_tray_idle_warning_dark.png",
             // Linux never sets the warning flag (Secure Input is macOS-only),
             // but fall back to the normal icon just in case.
-            AppTheme::Colored => "resources/handy.png",
+            AppTheme::Colored => "resources/vozel_idle.png",
         };
     }
     match (theme, state) {
         // Dark theme uses light icons
-        (AppTheme::Dark, TrayIconState::Idle) => "resources/tray_idle.png",
-        (AppTheme::Dark, TrayIconState::Recording) => "resources/tray_recording.png",
-        (AppTheme::Dark, TrayIconState::Transcribing) => "resources/tray_transcribing.png",
+        (AppTheme::Dark, TrayIconState::Idle) => "resources/vozel_tray_idle.png",
+        (AppTheme::Dark, TrayIconState::Recording) => "resources/vozel_tray_recording.png",
+        (AppTheme::Dark, TrayIconState::Transcribing) => "resources/vozel_tray_transcribing.png",
         // Light theme uses dark icons
-        (AppTheme::Light, TrayIconState::Idle) => "resources/tray_idle_dark.png",
-        (AppTheme::Light, TrayIconState::Recording) => "resources/tray_recording_dark.png",
-        (AppTheme::Light, TrayIconState::Transcribing) => "resources/tray_transcribing_dark.png",
-        // Colored theme uses pink icons (for Linux)
-        (AppTheme::Colored, TrayIconState::Idle) => "resources/handy.png",
-        (AppTheme::Colored, TrayIconState::Recording) => "resources/recording.png",
-        (AppTheme::Colored, TrayIconState::Transcribing) => "resources/transcribing.png",
+        (AppTheme::Light, TrayIconState::Idle) => "resources/vozel_tray_idle_dark.png",
+        (AppTheme::Light, TrayIconState::Recording) => "resources/vozel_tray_recording_dark.png",
+        (AppTheme::Light, TrayIconState::Transcribing) => {
+            "resources/vozel_tray_transcribing_dark.png"
+        }
+        // Colored theme uses the Vozel icon (for Linux)
+        (AppTheme::Colored, TrayIconState::Idle) => "resources/vozel_idle.png",
+        (AppTheme::Colored, TrayIconState::Recording) => "resources/vozel_recording.png",
+        (AppTheme::Colored, TrayIconState::Transcribing) => "resources/vozel_transcribing.png",
     }
 }
 
@@ -445,9 +447,9 @@ pub fn tray_tooltip() -> String {
 
 fn version_label() -> String {
     if cfg!(debug_assertions) {
-        format!("Handy v{} (Dev)", env!("CARGO_PKG_VERSION"))
+        format!("Vozel v{} (Dev)", env!("CARGO_PKG_VERSION"))
     } else {
-        format!("Handy v{}", env!("CARGO_PKG_VERSION"))
+        format!("Vozel v{}", env!("CARGO_PKG_VERSION"))
     }
 }
 
@@ -726,11 +728,11 @@ mod tests {
         // The icon differs but the menu inputs are identical, so a
         // Recording -> Transcribing transition must not rebuild the menu.
         let recording = TrayDesired {
-            icon_path: "resources/tray_recording.png",
+            icon_path: "resources/vozel_tray_recording.png",
             menu: inputs(TrayIconState::Recording.is_busy()),
         };
         let transcribing = TrayDesired {
-            icon_path: "resources/tray_transcribing.png",
+            icon_path: "resources/vozel_tray_transcribing.png",
             menu: inputs(TrayIconState::Transcribing.is_busy()),
         };
         assert_ne!(recording.icon_path, transcribing.icon_path);

@@ -1,7 +1,8 @@
 use std::collections::HashMap;
 use std::sync::{Mutex, OnceLock};
 
-const SERVICE: &str = "com.pais.handy.transcription";
+const SERVICE: &str = "io.github.renatoximenes.vozel.transcription";
+const LEGACY_SERVICE: &str = "com.pais.handy.transcription";
 const MAX_PROFILE_ID_LEN: usize = 128;
 
 fn memory_store() -> &'static Mutex<HashMap<String, String>> {
@@ -37,6 +38,41 @@ fn validate_profile_id(profile_id: &str) -> Result<(), String> {
 fn keyring_entry(profile_id: &str) -> Result<keyring::Entry, String> {
     keyring::Entry::new(SERVICE, &format!("endpoint:{profile_id}"))
         .map_err(|error| format!("Failed to open the system credential store: {error}"))
+}
+
+/// Copy credentials from the previous app identity once. Existing Vozel keys
+/// win and the original keyring entries are preserved for the upstream app.
+pub fn migrate_legacy_keys(
+    data_dir: &std::path::Path,
+    profile_ids: &[String],
+) -> Result<(), String> {
+    if use_memory_backend() {
+        return Ok(());
+    }
+    let marker = data_dir.join("legacy_credentials_imported_v1");
+    if marker.exists() {
+        return Ok(());
+    }
+    for profile_id in profile_ids {
+        validate_profile_id(profile_id)?;
+        let current = keyring_entry(profile_id)?;
+        match current.get_password() {
+            Ok(_) => continue,
+            Err(keyring::Error::NoEntry) => {}
+            Err(error) => return Err(format!("Failed to inspect current credential: {error}")),
+        }
+        let legacy = keyring::Entry::new(LEGACY_SERVICE, &format!("endpoint:{profile_id}"))
+            .map_err(|error| format!("Failed to open legacy credential: {error}"))?;
+        match legacy.get_password() {
+            Ok(secret) if !secret.is_empty() => current
+                .set_password(&secret)
+                .map_err(|error| format!("Failed to import credential: {error}"))?,
+            Ok(_) | Err(keyring::Error::NoEntry) => {}
+            Err(error) => return Err(format!("Failed to read legacy credential: {error}")),
+        }
+    }
+    std::fs::write(marker, b"imported\n")
+        .map_err(|error| format!("Failed to mark credential import complete: {error}"))
 }
 
 fn set_secret_blocking(profile_id: &str, secret: &str) -> Result<(), String> {

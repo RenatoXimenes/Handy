@@ -3,7 +3,7 @@
 //! `catalog.json` is generated at build time by `scripts/gen_catalog.py` from the
 //! `handy-computer` Hugging Face org (card `transcribe_cpp` capabilities +
 //! benchmarks, a GGUF header probe for name/params, and local curation for the
-//! recommended set). It is compiled into the binary so Handy ships a complete
+//! recommended set). It is compiled into the binary so Vozel ships a complete
 //! model list with zero network access.
 //!
 //! Each entry is normalised into a [`ModelDescriptor`] — the same source-agnostic
@@ -45,6 +45,10 @@ struct CatalogModel {
     /// to `main` (see `hf_cached_path`) so downloads that predate pinning keep
     /// resolving.
     revision: Option<String>,
+    /// A release asset for curated models distributed outside Hugging Face.
+    /// Its bytes are verified with the selected file's SHA-256.
+    #[serde(default)]
+    download_url: Option<String>,
     name: String,
     description: String,
     architecture: Option<String>,
@@ -79,15 +83,23 @@ impl From<&CatalogModel> for ModelDescriptor {
             .map(|f| f.filename.clone())
             .unwrap_or_default();
 
-        ModelDescriptor {
-            id: format!("{}/{}", m.id, default_filename),
-            source: ModelSource::HuggingFace {
+        let source = match &m.download_url {
+            Some(url) => ModelSource::Url {
+                url: url.clone(),
+                sha256: m
+                    .files
+                    .iter()
+                    .find(|file| file.filename == default_filename)
+                    .and_then(|file| file.sha256.clone()),
+            },
+            None => ModelSource::HuggingFace {
                 repo_id: m.id.clone(),
-                // Acquire at the pin: `resolve/<sha>` is immutable (CDN-friendly)
-                // and guarantees the bytes match the catalog's hashes. `main`
-                // only remains as a lookup fallback for pre-pinning caches.
                 revision: m.revision.clone().unwrap_or_else(|| "main".to_string()),
             },
+        };
+        ModelDescriptor {
+            id: format!("{}/{}", m.id, default_filename),
+            source,
             name: m.name.clone(),
             description: m.description.clone(),
             engine_type: EngineType::TranscribeCpp,
@@ -149,6 +161,9 @@ pub fn mirror_fallbacks(model_id: &str) -> Vec<MirrorFile> {
     }) else {
         return Vec::new();
     };
+    if m.download_url.is_some() {
+        return Vec::new();
+    }
     let Some(revision) = m.revision.as_deref() else {
         return Vec::new();
     };
@@ -218,6 +233,22 @@ mod tests {
     use std::collections::BTreeSet;
 
     #[test]
+    fn ptbr_release_model_has_exact_language_and_verified_url() {
+        let model = CATALOG
+            .iter()
+            .find(|model| model.name == "Nemotron 3.5 ASR PT-BR")
+            .expect("PT-BR model is included in the bundled catalog");
+        assert_eq!(model.caps.languages.as_ref().unwrap(), &["pt-BR"]);
+        assert!(matches!(
+            &model.source,
+            ModelSource::Url { url, sha256 }
+                if url.ends_with("/nemotron-3.5-asr-ptbr-Q8_0.gguf")
+                    && sha256.as_deref() == Some("094912bc26f5f684a3809f4615d08c63c80e508432b2d9215404e37a240ac31c")
+        ));
+        assert!(mirror_fallbacks(&model.id).is_empty());
+    }
+
+    #[test]
     fn catalog_parses_and_is_nonempty() {
         assert!(!CATALOG.is_empty(), "bundled catalog should contain models");
     }
@@ -255,6 +286,16 @@ mod tests {
         // networks; a catalog entry without one (missing revision, missing
         // sha256, empty mirrors) silently loses that net.
         for d in CATALOG.iter() {
+            if let ModelSource::Url { url, sha256 } = &d.source {
+                assert!(url.starts_with("https://"), "{}: bad direct URL", d.id);
+                assert_eq!(
+                    sha256.as_ref().map(String::len),
+                    Some(64),
+                    "{}: direct URL lacks a SHA-256",
+                    d.id
+                );
+                continue;
+            }
             let mirrors = mirror_fallbacks(&d.id);
             assert!(!mirrors.is_empty(), "{}: no mirror fallbacks", d.id);
             for m in &mirrors {

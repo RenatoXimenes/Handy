@@ -14,6 +14,7 @@ mod input;
 mod llm_client;
 mod managers;
 mod memory;
+mod migration;
 mod overlay;
 mod paste_tx;
 pub mod portable;
@@ -825,11 +826,11 @@ pub fn run(cli_args: CliArgs) {
                     Target::new(if let Some(data_dir) = portable::data_dir() {
                         TargetKind::Folder {
                             path: data_dir.join("logs"),
-                            file_name: Some("handy".into()),
+                            file_name: Some("vozel".into()),
                         }
                     } else {
                         TargetKind::LogDir {
-                            file_name: Some("handy".into()),
+                            file_name: Some("vozel".into()),
                         }
                     })
                     .filter(|metadata| {
@@ -854,7 +855,7 @@ pub fn run(cli_args: CliArgs) {
         builder = builder.plugin(tauri_nspanel::init());
     }
 
-    // Single-instance forwards CLI args to an already-running Handy and exits.
+    // Single-instance forwards CLI args to an already-running Vozel and exits.
     // That would make the headless path
     // (--transcribe-file/--list-devices/--list-models) a silent no-op whenever the
     // app is already open, so skip it in headless mode and run a standalone
@@ -898,6 +899,20 @@ pub fn run(cli_args: CliArgs) {
         ))
         .manage(cli_args.clone())
         .setup(move |app| {
+            match migration::import_legacy(app.handle()) {
+                Ok(Some(data_dir)) => {
+                    let profile_ids = settings::get_settings(app.handle())
+                        .transcription_endpoints
+                        .into_iter()
+                        .map(|profile| profile.id)
+                        .collect::<Vec<_>>();
+                    if let Err(error) = secret_store::migrate_legacy_keys(&data_dir, &profile_ids) {
+                        log::warn!("Legacy credential import did not complete: {error}");
+                    }
+                }
+                Ok(None) => {}
+                Err(error) => log::warn!("Legacy data import did not complete: {error}"),
+            }
             #[cfg(target_os = "windows")]
             log::info!(
                 "Vulkan layer policy: VK_LOADER_LAYERS_DISABLE={:?}, HANDY_KEEP_VULKAN_IMPLICIT_LAYERS={}",
@@ -953,7 +968,7 @@ pub fn run(cli_args: CliArgs) {
             // for portable mode (redirects WebView2 cache to portable Data dir)
             let mut win_builder =
                 tauri::WebviewWindowBuilder::new(app, "main", tauri::WebviewUrl::App("/".into()))
-                    .title("Handy")
+                    .title("Vozel")
                     .inner_size(680.0, 570.0)
                     .min_inner_size(680.0, 570.0)
                     .resizable(true)

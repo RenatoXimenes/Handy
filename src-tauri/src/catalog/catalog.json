@@ -1,10 +1,39 @@
 {
   "catalog_version": 2,
-  "generated_at": "2026-08-17T11:27:14+00:00",
+  "generated_at": "2026-09-23T00:34:26+00:00",
   "mirrors": [
     "https://blob.handy.computer"
   ],
   "models": [
+    {
+      "id": "RenatoXimenes/vozel-nemotron-ptbr",
+      "revision": null,
+      "download_url": "https://github.com/RenatoXimenes/Vozel/releases/download/vozel-models-v1/nemotron-3.5-asr-ptbr-Q8_0.gguf",
+      "slug": "nemotron-3.5-asr-ptbr",
+      "name": "Nemotron 3.5 ASR PT-BR",
+      "architecture": "parakeet",
+      "family": "nemotron",
+      "parameters": "0.6B",
+      "description": "Português brasileiro local, ajustado por Ottema AI",
+      "base_model": "ottema/nemotron-3.5-asr-ptbr",
+      "license": "openmdw-1.1",
+      "language_count": 1,
+      "languages": ["pt-BR"],
+      "capabilities": {
+        "streaming": true,
+        "translate": false,
+        "lang_detect": false,
+        "timestamps": "token"
+      },
+      "speed_score": null,
+      "accuracy_score": null,
+      "files": [
+        {"filename": "nemotron-3.5-asr-ptbr-Q8_0.gguf", "quant": "Q8_0", "size_bytes": 751093920, "sha256": "094912bc26f5f684a3809f4615d08c63c80e508432b2d9215404e37a240ac31c"}
+      ],
+      "default_quant": "Q8_0",
+      "recommended": true,
+      "recommended_rank": 1
+    },
     {
       "id": "handy-computer/parakeet-unified-en-0.6b-gguf",
       "revision": "7e948f21b7bdbac698d3318db9d350f1096f3b6c",

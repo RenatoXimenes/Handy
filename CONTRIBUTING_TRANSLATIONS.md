@@ -1,6 +1,10 @@
-# Contributing Translations to Handy
+# Contributing Translations to Vozel
 
-Thank you for helping translate Handy! This guide explains how to add or improve translations.
+Thank you for helping translate Vozel. This guide explains how to add or improve translations.
+
+Vozel is an independent fork of Handy. The application still has legacy Handy
+identifiers while data migration is pending; preserve those identifiers where
+they are required by code or existing translation keys.
 
 ## Quick Start
 
@@ -120,7 +124,8 @@ Found a typo or better translation?
 
 ### Don't:
 
-- Translate brand names (Handy, transcribe.cpp, ggml, OpenAI)
+- Translate or change product, project or dependency names (Vozel, Handy,
+  transcribe.cpp, ggml, OpenAI)
 - Change or remove `{{variables}}`
 - Modify JSON keys
 - Add extra spaces or formatting
@@ -172,4 +177,4 @@ We'd love help with:
 
 ---
 
-Thank you for making Handy accessible to more people around the world!
+Thank you for making Vozel accessible to more people around the world!

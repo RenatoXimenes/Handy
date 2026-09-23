@@ -105,7 +105,7 @@
     },
     "permissions": {
       "title": "Tilladelser påkrævet",
-      "description": "Handy har brug for et par tilladelser for at fungere korrekt.",
+      "description": "Vozel har brug for et par tilladelser for at fungere korrekt.",
       "microphone": {
         "title": "Mikrofonadgang",
         "description": "Påkrævet for at høre din stemme til transskription."
@@ -166,7 +166,7 @@
     "general": {
       "title": "Generelt",
       "shortcut": {
-        "title": "Handy-genveje",
+        "title": "Vozel-genveje",
         "description": "Konfigurer tastaturgenveje til at udløse tale-til-tekst-optagelse",
         "loading": "Indlæser genveje...",
         "none": "Ingen genveje konfigureret",
@@ -230,7 +230,7 @@
       },
       "rescan": {
         "label": "Søg igen",
-        "tooltip": "Søg igen efter modeller, der er tilføjet til modelmappen eller Hugging Face-cachen uden for Handy"
+        "tooltip": "Søg igen efter modeller, der er tilføjet til modelmappen eller Hugging Face-cachen uden for Vozel"
       },
       "noModelsMatch": "Ingen modeller matcher dette filter."
     },
@@ -298,11 +298,11 @@
       },
       "autostart": {
         "label": "Start ved opstart",
-        "description": "Start Handy automatisk, når du logger ind på din computer."
+        "description": "Start Vozel automatisk, når du logger ind på din computer."
       },
       "showTrayIcon": {
         "label": "Vis proceslinjeikon",
-        "description": "Vis Handy-ikonet i meddelelsesområdet."
+        "description": "Vis Vozel-ikonet i meddelelsesområdet."
       },
       "overlay": {
         "style": {
@@ -498,7 +498,7 @@
       },
       "updateChecks": {
         "label": "Tjek for opdateringer",
-        "description": "Tjek automatisk for nye versioner af Handy",
+        "description": "Tjek automatisk for nye versioner af Vozel",
         "lockedDescription": "Deaktiveret af systemkonfiguration (HANDY_DISABLE_UPDATER)"
       },
       "whatsNewPreview": {
@@ -590,7 +590,7 @@
       },
       "keyboardDiagnostic": {
         "title": "Tastaturdiagnostik",
-        "description": "Kontrollerer, om tastaturhændelser når frem til Handy. Kun antallet af hændelser registreres — aldrig hvilke taster du trykker på.",
+        "description": "Kontrollerer, om tastaturhændelser når frem til Vozel. Kun antallet af hændelser registreres — aldrig hvilke taster du trykker på.",
         "run": "Kør 10 s diagnostik",
         "running": "Lytter… tryk på din genvej et par gange (f.eks. Option+Space)",
         "secureInputLabel": "Secure Input",
@@ -604,7 +604,7 @@
         "mouse": "Mus",
         "verdictBlocked": "Secure Input blokerer tastehændelser — genveje med en almindelig tast kan ikke fungere, før det er løst.",
         "verdictSuspicious": "Der kom modifikatorhændelser, men ingen tastehændelser — noget undertrykker taster, selvom Secure Input rapporteres som deaktiveret. Rapportér det gerne på GitHub.",
-        "verdictOk": "Tastehændelser når frem til Handy som normalt.",
+        "verdictOk": "Tastehændelser når frem til Vozel som normalt.",
         "verdictNoEvents": "Ingen hændelser registreret — trykkede du på nogen taster under testen?",
         "failed": "Diagnostik mislykkedes: {{error}}"
       }
@@ -613,15 +613,15 @@
       "title": "Om",
       "version": {
         "title": "Version",
-        "description": "Nuværende version af Handy"
+        "description": "Nuværende version af Vozel"
       },
       "whatsNewUpdates": {
         "label": "Vis nyheder",
-        "description": "Vis udgivelsesnoter, efter Handy opdateres"
+        "description": "Vis udgivelsesnoter, efter Vozel opdateres"
       },
       "appDataDirectory": {
         "title": "Appdatamappe",
-        "description": "Placering, hvor Handy gemmer sine data"
+        "description": "Placering, hvor Vozel gemmer sine data"
       },
       "sourceCode": {
         "title": "Kildekode",
@@ -630,7 +630,7 @@
       },
       "supportDevelopment": {
         "title": "Støt udviklingen",
-        "description": "Hjælp os med at fortsætte udviklingen af Handy",
+        "description": "Hjælp os med at fortsætte udviklingen af Vozel",
         "button": "Donér"
       },
       "acknowledgments": {
@@ -638,7 +638,7 @@
         "ggml": {
           "title": "ggml",
           "description": "Højtydende tensor-bibliotek til maskinlæringsinferens på enheden",
-          "details": "Handys lokale tale-til-tekst funktionalitet er bygget på transcribe.cpp og ggml. Tak for det fantastiske arbejde af Georgi Gerganov og bidragyderne."
+          "details": "Vozels lokale tale-til-tekst funktionalitet er bygget på transcribe.cpp og ggml. Tak for det fantastiske arbejde af Georgi Gerganov og bidragyderne."
         }
       }
     },
@@ -695,7 +695,7 @@
     "portableUpdateBrowseButton": "Åbn GitHub Releases"
   },
   "whatsNew": {
-    "title": "Nyt i Handy v{{version}}"
+    "title": "Nyt i Vozel v{{version}}"
   },
   "common": {
     "loading": "Indlæser...",
@@ -709,7 +709,7 @@
     "cancel": "Cancel"
   },
   "accessibility": {
-    "permissionsDescription": "Handy har brug for tilgængelighedstilladelser for at skrive den transskriberede tekst.",
+    "permissionsDescription": "Vozel har brug for tilgængelighedstilladelser for at skrive den transskriberede tekst.",
     "openSettings": "Åbn systemindstillinger"
   },
   "errors": {
@@ -732,11 +732,11 @@
   },
   "appLanguage": {
     "title": "Applikationssprog",
-    "description": "Skift sproget for Handy-grænsefladen"
+    "description": "Skift sproget for Vozel-grænsefladen"
   },
   "theme": {
     "title": "Applikationstema",
-    "description": "Vælg om Handy skal følge dit systemtema eller forblive lyst eller mørkt",
+    "description": "Vælg om Vozel skal følge dit systemtema eller forblive lyst eller mørkt",
     "options": {
       "system": "System",
       "light": "Lys",

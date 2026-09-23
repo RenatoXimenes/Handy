@@ -188,9 +188,9 @@ fn build_headers(
     headers.insert(
         reqwest::header::USER_AGENT,
         HeaderValue::from_static(concat!(
-            "Handy/",
+            "Vozel/",
             env!("CARGO_PKG_VERSION"),
-            " (+https://github.com/cjpais/Handy)"
+            " (+https://github.com/RenatoXimenes/Handy)"
         )),
     );
 

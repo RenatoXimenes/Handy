@@ -285,9 +285,13 @@ pub fn effective_language(
     }
 
     if intent != "auto" {
-        // Prefer the same base code before considering an equivalence alias. If
-        // a future model advertises both `no` and `nb`, an explicit `nb` intent
-        // must select `nb`, regardless of capability-list order.
+        // Prefer the exact advertised locale before a base-language match. A
+        // model can expose several variants of one language (for example
+        // `pt-PT` and `pt-BR`); selecting Portuguese (Brazil) must not depend
+        // on the catalog's ordering. Equivalence aliases remain last.
+        let exact_match = supported_languages
+            .iter()
+            .find(|language| language.as_str() == intent);
         let exact_base_match = supported_languages
             .iter()
             .find(|language| base_language(language) == base_language(intent));
@@ -297,7 +301,7 @@ pub fn effective_language(
             })
         };
 
-        if let Some(code) = exact_base_match.or_else(equivalent_match) {
+        if let Some(code) = exact_match.or(exact_base_match).or_else(equivalent_match) {
             if intent == "zh-Hans" || intent == "zh-Hant" {
                 return intent.to_string();
             }
@@ -2256,6 +2260,15 @@ impl ModelManager {
 
         // Don't download if complete version already exists
         if model_path.exists() {
+            if let Some(expected) = expected_sha256.as_deref() {
+                let actual = Self::compute_sha256(&model_path)?;
+                if !actual.eq_ignore_ascii_case(expected) {
+                    return Err(anyhow::anyhow!(
+                        "Existing model has an unexpected SHA-256: {}. Move it aside and retry the download.",
+                        model_path.display()
+                    ));
+                }
+            }
             // Clean up any partial file that might exist
             if partial_path.exists() {
                 let _ = fs::remove_file(&partial_path);
@@ -2784,6 +2797,18 @@ mod tests {
 
         assert_eq!(effective_language("nb", &languages, true), "nb");
         assert_eq!(effective_language("no", &languages, true), "no");
+    }
+
+    #[test]
+    fn test_effective_language_prefers_exact_pt_br_locale() {
+        // Keep the PT-BR fine-tune's only advertised locale intact even when
+        // a future catalog entry also carries another Portuguese locale first.
+        let languages = vec!["pt-PT".to_string(), "pt-BR".to_string()];
+
+        assert_eq!(effective_language("pt-BR", &languages, false), "pt-BR");
+        // A bare intent remains deterministic and uses the first compatible
+        // advertised locale when no exact locale was requested.
+        assert_eq!(effective_language("pt", &languages, false), "pt-PT");
     }
 
     #[test]

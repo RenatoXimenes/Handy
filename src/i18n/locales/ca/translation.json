@@ -105,7 +105,7 @@
     },
     "permissions": {
       "title": "Permisos necessaris",
-      "description": "El Handy demana alguns permisos per funcionar correctament.",
+      "description": "El Vozel demana alguns permisos per funcionar correctament.",
       "microphone": {
         "title": "Accés al micròfon",
         "description": "Necessari per escoltar la vostra veu i transcriure-la."
@@ -166,7 +166,7 @@
     "general": {
       "title": "General",
       "shortcut": {
-        "title": "Dreceres del Handy",
+        "title": "Dreceres del Vozel",
         "description": "Configura les dreceres de teclat per iniciar l'enregistrament de veu per a la transcripció",
         "loading": "S'estan carregant les dreceres...",
         "none": "No hi ha cap drecera configurada",
@@ -230,7 +230,7 @@
       },
       "rescan": {
         "label": "Torna a cercar",
-        "tooltip": "Torna a cercar models afegits a la carpeta de models o a la memòria cau de Hugging Face des de fora del Handy"
+        "tooltip": "Torna a cercar models afegits a la carpeta de models o a la memòria cau de Hugging Face des de fora del Vozel"
       },
       "noModelsMatch": "Cap model no coincideix amb aquest filtre."
     },
@@ -298,11 +298,11 @@
       },
       "autostart": {
         "label": "Inicia en entrar a la sessió",
-        "description": "Inicia automàticament el Handy quan entreu a la sessió de l'ordinador."
+        "description": "Inicia automàticament el Vozel quan entreu a la sessió de l'ordinador."
       },
       "showTrayIcon": {
         "label": "Mostra la icona a la safata",
-        "description": "Mostra la icona del Handy a la safata del sistema."
+        "description": "Mostra la icona del Vozel a la safata del sistema."
       },
       "overlay": {
         "style": {
@@ -498,7 +498,7 @@
       },
       "updateChecks": {
         "label": "Comproveu si hi ha actualitzacions",
-        "description": "Comprova automàticament si hi ha versions noves del Handy",
+        "description": "Comprova automàticament si hi ha versions noves del Vozel",
         "lockedDescription": "Desactivat per la configuració del sistema (HANDY_DISABLE_UPDATER)"
       },
       "whatsNewPreview": {
@@ -590,7 +590,7 @@
       },
       "keyboardDiagnostic": {
         "title": "Diagnòstic del teclat",
-        "description": "Comprova si els esdeveniments del teclat arriben al Handy. Només se'n registra el recompte, mai les tecles que premeu.",
+        "description": "Comprova si els esdeveniments del teclat arriben al Vozel. Només se'n registra el recompte, mai les tecles que premeu.",
         "run": "Executa un diagnòstic de 10 s",
         "running": "S'està escoltant… prema la drecera unes quantes vegades (p. ex., Option+Space)",
         "secureInputLabel": "Entrada segura",
@@ -604,7 +604,7 @@
         "mouse": "Ratolí",
         "verdictBlocked": "L'entrada segura bloca els esdeveniments de tecla. Les dreceres amb tecles no poden funcionar fins que es resolgui.",
         "verdictSuspicious": "Han arribat esdeveniments de modificadors, però no de tecles. Alguna cosa suprimeix les tecles tot i que l'entrada segura consta com a desactivada. Informeu-ne al GitHub.",
-        "verdictOk": "Els esdeveniments de tecla arriben al Handy amb normalitat.",
+        "verdictOk": "Els esdeveniments de tecla arriben al Vozel amb normalitat.",
         "verdictNoEvents": "No s'ha capturat cap esdeveniment. Heu premut alguna tecla durant la prova?",
         "failed": "El diagnòstic ha fallat: {{error}}"
       }
@@ -613,15 +613,15 @@
       "title": "Quant a",
       "version": {
         "title": "Versió",
-        "description": "Versió actual del Handy"
+        "description": "Versió actual del Vozel"
       },
       "whatsNewUpdates": {
         "label": "Mostra les novetats",
-        "description": "Mostra les notes de la versió després d'actualitzar el Handy"
+        "description": "Mostra les notes de la versió després d'actualitzar el Vozel"
       },
       "appDataDirectory": {
         "title": "Directori de dades de l'aplicació",
-        "description": "Ubicació on el Handy desa les dades"
+        "description": "Ubicació on el Vozel desa les dades"
       },
       "sourceCode": {
         "title": "Codi font",
@@ -630,7 +630,7 @@
       },
       "supportDevelopment": {
         "title": "Dona suport al desenvolupament",
-        "description": "Ajudeu-nos a continuar desenvolupant el Handy",
+        "description": "Ajudeu-nos a continuar desenvolupant el Vozel",
         "button": "Feu una donació"
       },
       "acknowledgments": {
@@ -638,7 +638,7 @@
         "ggml": {
           "title": "ggml",
           "description": "Biblioteca de tensors d'alt rendiment per a la inferència d'aprenentatge automàtic al dispositiu",
-          "details": "La transcripció local de veu a text del Handy es basa en el transcribe.cpp i el ggml. Gràcies a la gran feina de Georgi Gerganov i dels col·laboradors."
+          "details": "La transcripció local de veu a text del Vozel es basa en el transcribe.cpp i el ggml. Gràcies a la gran feina de Georgi Gerganov i dels col·laboradors."
         }
       }
     },
@@ -695,7 +695,7 @@
     "portableUpdateBrowseButton": "Obriu GitHub Releases"
   },
   "whatsNew": {
-    "title": "Novetats del Handy v{{version}}"
+    "title": "Novetats del Vozel v{{version}}"
   },
   "common": {
     "loading": "S'està carregant...",
@@ -709,7 +709,7 @@
     "cancel": "Cancel"
   },
   "accessibility": {
-    "permissionsDescription": "El Handy necessita permisos d'accessibilitat per escriure el text transcrit.",
+    "permissionsDescription": "El Vozel necessita permisos d'accessibilitat per escriure el text transcrit.",
     "openSettings": "Obriu la configuració del sistema"
   },
   "errors": {
@@ -732,11 +732,11 @@
   },
   "appLanguage": {
     "title": "Llengua de l'aplicació",
-    "description": "Canvia la llengua de la interfície del Handy"
+    "description": "Canvia la llengua de la interfície del Vozel"
   },
   "theme": {
     "title": "Tema de l'aplicació",
-    "description": "Tria si el Handy segueix el tema del sistema o es manté en mode clar o fosc",
+    "description": "Tria si el Vozel segueix el tema del sistema o es manté en mode clar o fosc",
     "options": {
       "system": "Sistema",
       "light": "Clar",
