@@ -5,6 +5,8 @@ Windows. Press a shortcut, speak, and paste the transcription into the active
 application. It supports local speech models and optional Groq, OpenAI or
 OpenAI-compatible transcription APIs.
 
+![Tela de modelos do Vozel com opções de transcrição por API](docs/assets/vozel-models-api.png)
+
 This project is a fork of [Handy by CJ Pais](https://github.com/cjpais/Handy).
 Vozel has its own name, icon, application identifier and support channel. It is
 not affiliated with, endorsed by or supported by the Handy project. The source

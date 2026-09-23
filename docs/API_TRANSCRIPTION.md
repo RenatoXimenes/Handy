@@ -6,6 +6,8 @@ OpenAI-compatible `POST /audio/transcriptions` contract. Vozel is an
 independent fork and is not affiliated with or endorsed by the upstream
 project.
 
+![Tela de modelos do Vozel com endpoints Groq e OpenAI](assets/vozel-models-api.png)
+
 ## When to use it
 
 - Use a local model when audio privacy, offline operation or predictable cost is
