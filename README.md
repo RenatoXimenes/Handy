@@ -23,7 +23,7 @@ The download is about 751 MB. The model is not bundled with the app and does
 not send recorded audio to a provider. This is distinct from the multilingual
 Nemotron 3.5 base model.
 
-The download will become available with the model release. See the
+The file is available in the [model release](https://github.com/RenatoXimenes/Vozel/releases/tag/vozel-models-v1). See the
 [model origin, verification and limitations](docs/models/NEMOTRON_PTBR.md).
 The model's [OpenMDW-1.1 license](licenses/OpenMDW-1.1.txt) is separate from
 the application's MIT license. No accuracy benchmark for the converted GGUF
