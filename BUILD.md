@@ -1,8 +1,6 @@
 # Build Instructions
 
-This guide covers how to set up the development environment and build Vozel from source across different platforms. Vozel is an independent fork of Handy;
-the repository URL remains `RenatoXimenes/Handy` until its GitHub rename is
-approved.
+This guide covers how to set up the development environment and build Vozel from source across different platforms. Vozel is an independent fork of Handy.
 
 > Vozel uses its own bundle name and application identifier. It copies existing
 > Handy data on first launch without deleting the original files.
@@ -97,7 +95,7 @@ ORT_LIB_LOCATION=$(brew --prefix onnxruntime)/lib ORT_PREFER_DYNAMIC_LINK=1 bun 
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/RenatoXimenes/Handy.git vozel
+git clone https://github.com/RenatoXimenes/Vozel.git vozel
 cd vozel
 ```
 

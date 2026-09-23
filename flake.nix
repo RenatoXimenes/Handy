@@ -178,7 +178,7 @@
 
             meta = {
               description = "A free, open source, and extensible speech-to-text application that works completely offline";
-              homepage = "https://github.com/RenatoXimenes/Handy";
+              homepage = "https://github.com/RenatoXimenes/Vozel";
               license = lib.licenses.mit;
               mainProgram = "vozel";
               platforms = supportedSystems;

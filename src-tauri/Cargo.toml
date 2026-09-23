@@ -5,8 +5,8 @@ description = "Vozel desktop speech-to-text"
 authors = ["Renato Ximenes"]
 edition = "2021"
 license = "MIT"
-homepage = "https://github.com/RenatoXimenes/Handy"
-repository = "https://github.com/RenatoXimenes/Handy"
+homepage = "https://github.com/RenatoXimenes/Vozel"
+repository = "https://github.com/RenatoXimenes/Vozel"
 default-run = "vozel"
 
 [profile.dev]

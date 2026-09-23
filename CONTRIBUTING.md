@@ -1,7 +1,7 @@
 # Contributing to Vozel
 
 Vozel is independently maintained at
-[RenatoXimenes/Handy](https://github.com/RenatoXimenes/Handy). It is a fork of
+[RenatoXimenes/Vozel](https://github.com/RenatoXimenes/Vozel). It is a fork of
 [cjpais/Handy](https://github.com/cjpais/Handy), whose governance, support
 channels and sponsorship do not apply to Vozel.
 
@@ -11,19 +11,18 @@ Install [Rust](https://rustup.rs/), [Bun](https://bun.sh/) and the
 platform-specific prerequisites in [BUILD.md](BUILD.md). Then:
 
 ```bash
-git clone https://github.com/RenatoXimenes/Handy.git vozel
+git clone https://github.com/RenatoXimenes/Vozel.git vozel
 cd vozel
 git remote add upstream https://github.com/cjpais/Handy.git
 bun install
 bun run tauri dev
 ```
 
-The repository URL will retain `RenatoXimenes/Handy` until a GitHub rename is
-approved. The checkout directory may use `vozel`.
+The checkout directory may use `vozel`.
 
 ## Report and propose changes
 
-Search [Vozel issues](https://github.com/RenatoXimenes/Handy/issues) before
+Search [Vozel issues](https://github.com/RenatoXimenes/Vozel/issues) before
 opening a bug report. Include the version, operating system, reproduction
 steps, expected and observed behavior, and redacted logs. Do not include API
 keys, recordings or private transcripts.

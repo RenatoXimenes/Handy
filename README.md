@@ -10,8 +10,7 @@ Vozel has its own name, icon, application identifier and support channel. It is
 not affiliated with, endorsed by or supported by the Handy project. The source
 code retains the upstream MIT copyright notice in [LICENSE](LICENSE).
 
-The GitHub repository is still named `RenatoXimenes/Handy` until its rename is
-approved. The [previous API Edition release](https://github.com/RenatoXimenes/Handy/releases/tag/v0.9.7-api.1)
+The [previous API Edition release](https://github.com/RenatoXimenes/Vozel/releases/tag/v0.9.7-api.1)
 is a historical build under the old brand; it is **not** a Vozel installer. A
 Vozel release will be linked here after its package has been built and checked.
 
@@ -69,7 +68,7 @@ installation and data until you confirm the import in Vozel.
 ## Help and contribution
 
 Report Vozel bugs and security issues through this repository's
-[issues](https://github.com/RenatoXimenes/Handy/issues) and
+[issues](https://github.com/RenatoXimenes/Vozel/issues) and
 [security policy](SECURITY.md). Upstream Handy has its own issue tracker;
 please send Vozel-specific issues here. Read [CONTRIBUTING.md](CONTRIBUTING.md)
 before proposing changes.

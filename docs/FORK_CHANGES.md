@@ -5,9 +5,7 @@ This document records changes maintained by Vozel on top of upstream
 maintained and is not affiliated with or endorsed by upstream. The publication
 branch is based on upstream `main` after the v0.9.7 release.
 
-The repository URL remains
-[RenatoXimenes/Handy](https://github.com/RenatoXimenes/Handy) until its rename
-is approved. On first launch, Vozel copies settings, models, recordings and
+On first launch, Vozel copies settings, models, recordings and
 history from the legacy Handy data location without deleting the originals.
 
 ## Vozel identity and local model

@@ -190,7 +190,7 @@ fn build_headers(
         HeaderValue::from_static(concat!(
             "Vozel/",
             env!("CARGO_PKG_VERSION"),
-            " (+https://github.com/RenatoXimenes/Handy)"
+            " (+https://github.com/RenatoXimenes/Vozel)"
         )),
     );
 

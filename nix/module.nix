@@ -7,7 +7,7 @@
 #
 # Usage in your flake:
 #
-#   inputs.vozel.url = "github:RenatoXimenes/Handy";
+#   inputs.vozel.url = "github:RenatoXimenes/Vozel";
 #
 #   nixosConfigurations.myhost = nixpkgs.lib.nixosSystem {
 #     modules = [
